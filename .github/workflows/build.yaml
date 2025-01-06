@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
+# SPDX-License-Identifier: Apache-2.0
+
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+  
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Nix
+      uses: DeterminateSystems/nix-installer-action@v16
+
+    - name: Build Nixpresso
+      run: nix build --print-build-logs .#nixpresso
+
+    - name: Build assets
+      run: nix build --print-build-logs .#nixpresso.assets
+
+    - name: Build docs
+      run: nix build --print-build-logs .#nixpresso.docs
+
+    - name: Test
+      run: nix flake check --print-build-logs .
+
+    - name: Check for dead code
+      run: nix run github:astro/deadnix
+
+    - name: Check for unformatted code
+      run: nix run nixpkgs#nixfmt-rfc-style -- --check **/*.nix

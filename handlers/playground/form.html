@@ -1,0 +1,61 @@
+<section>
+    <form method="post">
+        <h2>Expression</h2>
+        <fieldset>
+            <label>Example
+                <select id="examples" name="example" aria-label="Choose an example...">
+                    <option>Example 1</option>
+                </select>
+            </label>
+            <textarea class="editor language-nix" rows=10 name="expression" id="expression"></textarea>
+        </fieldset>
+        <h2>Options</h2>
+        <fieldset>
+            <div class="grid">
+                <div>
+                    <label>Mode
+                        <select name="mode" aria-label="Select the evaluation mode..." required>
+                            <option value="serve" selected>Serve</option>
+                            <option value="log">Get build log</option>
+                            <option value="derivation">Get derivation</option>
+                            <option value="run">Run result</option>
+                        </select>
+                    </label>
+                    <label>
+                        <input type="checkbox" name="rebuild" role="switch" />
+                        Rebuild derivation (<tt>nix build --rebuild</tt>)
+                    </label>
+                    <label>
+                        <input type="checkbox" name="recursive" role="switch" />
+                        Recursive derviation (<tt>nix derivation show --recursive</tt>)
+                    </label>
+                    <label>
+                        <input type="checkbox" name="pty" role="switch" />
+                        Execute builds, evaluations and commands in a Pseudo Terminal (PTY).
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Derivation output
+                        <input type="text" name="output" value="out" />
+                    </label>
+                    <label>
+                        Sub-path
+                        <input type="text" name="subPath" />
+                    </label>
+                    <label>
+                        Environment variables
+                        <textarea name="env" placeholder="MYVAR=myvalue&#10;LANG=en_US.UTF-8"></textarea>
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+
+        <div role="group">
+            <button type="submit">
+                Evaluate&emsp;<kbd>Ctrl</kbd> + <kbd>&crarr;</kbd>
+            </button>
+            <button onclick="history.back()">Back</button>
+        </div>
+    </form>
+</section>

@@ -1,0 +1,101 @@
+/* SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
+   SPDX-License-Identifier: Apache-2.0
+*/
+
+@use "~@picocss/pico/scss/pico" with ($enable-semantic-container: true,
+    $modules: ("themes/default": false,
+        "components/loading": false,
+    ),
+);
+@use "~@picocss/pico/scss/_settings" as *;
+
+
+@use "xterm";
+@use "editor";
+@use "theme/_index";
+@use "theme/solarized" as *;
+
+:root {
+    #{$css-var-prefix}spacing: 0.5rem;
+    #{$css-var-prefix}form-element-spacing-vertical: 0.3em;
+    #{$css-var-prefix}form-element-spacing-horizontal: 0.5em;
+    #{$css-var-prefix}border-radius: 0.4rem;
+    #{$css-var-prefix}border-width: 1px;
+}
+
+body.home {
+    header {
+        text-align: center;
+    }
+
+    header>img.banner {
+        width: 30%;
+    }
+}
+
+header {
+    margin-top: 2em;
+}
+
+footer {
+    text-align: center;
+}
+
+table,
+.cm-editor,
+button,
+code {
+    border: var(#{$css-var-prefix}border-width) solid var(#{$css-var-prefix}muted-border-color) !important;
+}
+
+kbd {
+    padding: 0.2em 0.3em;
+}
+
+pre.terminal {
+    margin-bottom: var(#{$css-var-prefix}spacing);
+}
+
+pre.error {
+    white-space: pre-wrap;
+}
+
+label> :where(div.cm-editor) {
+    margin-top: calc(var(#{$css-var-prefix}spacing)* 0.25);
+}
+
+img.logo {
+    height: 1em;
+    margin-right: 0.3em;
+}
+
+img.banner {
+    margin-bottom: 2em;
+}
+
+div.badges {
+    margin-bottom: 1em;
+    ;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: separate;
+    border-radius: var(#{$css-var-prefix}border-radius);
+    background-color: $solarized-base3;
+
+    td,
+    th {
+        background-color: inherit;
+    }
+
+    tr:last-child>td {
+        border-bottom: none;
+    }
+}
+
+button.large {
+    font-size: 1.5em;
+    margin: 0.8rem;
+    font-weight: bold;
+}

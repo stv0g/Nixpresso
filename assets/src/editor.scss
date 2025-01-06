@@ -1,0 +1,23 @@
+/* SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
+   SPDX-License-Identifier: Apache-2.0
+*/
+
+@use "~@picocss/pico/scss/_settings" as *;
+
+div.cm-editor {
+    margin-bottom: 1em;
+
+    .cm-content,
+    .cm-gutter {
+        min-height: 200px;
+    }
+
+    .cm-scroller {
+        overflow: auto;
+    }
+}
+
+.cm-editor,
+.cm-gutters {
+    border-radius: var(#{$css-var-prefix}border-radius);
+}

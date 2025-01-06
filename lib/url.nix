@@ -1,0 +1,183 @@
+# SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
+# SPDX-License-Identifier: Apache-2.0
+
+{
+  lib,
+}:
+let
+  inherit (lib)
+    replaceStrings
+    fixedWidthString
+    toHexString
+    mapAttrsToList
+    attrNames
+    escapeURL
+    ;
+
+  asciiTable = import ./ascii-table.nix;
+
+  /**
+    Escape a URL string.
+
+    # Example
+
+    ```nix
+    escape "foo bar"
+    =>
+    "foo%20bar"
+    ```
+
+    # Type
+
+    ```
+    escape :: String -> String
+    ```
+
+    # Arguments
+
+    url
+    : A URL string
+  */
+  escape = escapeURL;
+
+  /**
+    Unescape a URL string.
+
+    # Example
+
+    ```nix
+    unescape "foo%20bar"
+    =>
+    "foo bar"
+    ```
+
+    # Type
+
+    ```
+    unescape :: String -> String
+    ```
+
+    # Arguments
+
+    url
+    : A URL string
+  */
+  unescape =
+    let
+      unreserved = [
+        "A"
+        "B"
+        "C"
+        "D"
+        "E"
+        "F"
+        "G"
+        "H"
+        "I"
+        "J"
+        "K"
+        "L"
+        "M"
+        "N"
+        "O"
+        "P"
+        "Q"
+        "R"
+        "S"
+        "T"
+        "U"
+        "V"
+        "W"
+        "X"
+        "Y"
+        "Z"
+        "a"
+        "b"
+        "c"
+        "d"
+        "e"
+        "f"
+        "g"
+        "h"
+        "i"
+        "j"
+        "k"
+        "l"
+        "m"
+        "n"
+        "o"
+        "p"
+        "q"
+        "r"
+        "s"
+        "t"
+        "u"
+        "v"
+        "w"
+        "x"
+        "y"
+        "z"
+        "0"
+        "1"
+        "2"
+        "3"
+        "4"
+        "5"
+        "6"
+        "7"
+        "8"
+        "9"
+        "-"
+        "_"
+        "."
+        "~"
+      ];
+      toUnescape = removeAttrs asciiTable unreserved;
+
+      from = mapAttrsToList (_: c: "%${fixedWidthString 2 "0" (toHexString c)}") toUnescape;
+      to = attrNames toUnescape;
+    in
+    replaceStrings from to;
+
+  unescape' = url: unescape (replaceStrings [ "+" ] [ " " ] url);
+
+  /**
+    Get the full URL of a request.
+
+    # Example
+
+    ```nix
+    full {
+      host = "example.com";
+      uri = "/foo";
+    }
+    =>
+    "http://example.com/foo"
+    ```
+
+    # Type
+
+    ```
+    full :: { host: String, uri: String, ?tls: Boolean } -> String
+    ```
+
+    # Arguments
+
+    request
+    : A request object
+  */
+  full =
+    request:
+    let
+      schema = if request ? tls && request.tls != null then "https" else "http";
+    in
+    "${schema}://${request.host}${request.uri}";
+in
+{
+  inherit
+    unescape
+    unescape'
+    escape
+    full
+    ;
+}
