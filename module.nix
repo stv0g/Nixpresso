@@ -128,7 +128,7 @@ in
               A zero or negative value means there will be no timeout.
             '';
 
-            type = types.nullOr types.int;
+            type = types.nullOr types.str;
             example = "5m";
             default = null;
           };
@@ -140,7 +140,7 @@ in
               It is reset whenever a new request's header is read.
             '';
 
-            type = types.nullOr types.int;
+            type = types.nullOr types.str;
             example = "5m";
             default = null;
           };
@@ -152,7 +152,7 @@ in
               A zero or negative value means there will be no timeout.
             '';
 
-            type = types.nullOr types.int;
+            type = types.nullOr types.str;
             example = "10m";
             default = null;
           };
@@ -164,7 +164,7 @@ in
               A zero or negative value means there will be no timeout.
             '';
 
-            type = types.nullOr types.int;
+            type = types.nullOr types.str;
             example = "5m";
             default = null;
           };
@@ -176,7 +176,7 @@ in
               A zero or negative value means there will be no timeout.
             '';
 
-            type = types.nullOr types.int;
+            type = types.nullOr types.str;
             example = "5m";
             default = null;
           };
@@ -188,7 +188,7 @@ in
               A zero or negative value means there will be no timeout.
             '';
 
-            type = types.nullOr types.int;
+            type = types.nullOr types.str;
             example = "5m";
             default = null;
           };
