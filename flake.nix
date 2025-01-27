@@ -33,7 +33,7 @@
 
         nixosModules = {
           default = self.nixosModules.nixpresso;
-          nixpresso = import ./module.nix;
+          nixpresso = import ./module.nix { inherit self; };
         };
 
         lib = import ./lib {
