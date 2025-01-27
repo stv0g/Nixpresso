@@ -232,7 +232,7 @@ in
 
   config = mkIf cfg.enable {
     nixpkgs.overlays = [
-      self.overlays.${pkgs.system}.default
+      self.overlays.default
     ];
 
     systemd.services = {
