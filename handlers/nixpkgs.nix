@@ -23,7 +23,7 @@ let
 in
 mkHandler
   {
-    description = "Evaluate a path from Nixpkgs";
+    description = "Evaluate Nixpkgs derivations and serve them as files.";
   }
   (
     {
