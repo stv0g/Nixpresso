@@ -237,6 +237,20 @@ in
           type = types.listOf types.str;
           default = [ ];
         };
+
+        nixArgs = mkOption {
+          description = ''
+            Arguments to pass to Nix evaluation and build commands.
+          '';
+
+          example = [
+            "--option"
+            "sandbox"
+            "relaxed"
+          ];
+          type = types.listOf types.str;
+          default = [ ];
+        };
       };
     };
   };
@@ -287,6 +301,8 @@ in
                 allow-store = allowStore;
               })
               ++ cfg.settings.extraArgs
+              ++ [ "--" ]
+              ++ cfg.settings.nixArgs
             ));
 
           DynamicUser = true;
