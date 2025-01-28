@@ -100,7 +100,6 @@ func Run(cmd *exec.Cmd, withPTY int, verbose int, stdin io.Reader, stdout, stder
 				}
 			}()
 		}
-
 	} else {
 		if err := cmd.Start(); err != nil {
 			return nil, nil, fmt.Errorf("failed to start: %w", err)

@@ -129,9 +129,20 @@ func (r *Request) eval() error {
 		return fmt.Errorf("failed to assemble Nix arguments: %w", err)
 	}
 
+	argv := []string{r.handler.Handler}
+	argv = append(argv, "--apply", fmt.Sprintf("h: h %s", argsNix))
+	argv = append(argv, r.handler.NixArgs...)
+
+	var eval func(ctx context.Context, withPTY bool, verbose int, result any, argv ...string) error
+	if r.handler.Pure && r.handler.EvalCache {
+		eval = nix.EvalCached
+	} else {
+		eval = nix.Eval
+	}
+
 	durEval := r.measure("eval", func() {
 		ctx, cancel := context.WithTimeout(r.request.Context(), r.handler.MaxEvalTime)
-		err = r.evalCall(ctx, &r.result, "--apply", fmt.Sprintf("h: h %s", argsNix))
+		err = eval(ctx, r.handler.InspectResult.PTY, r.handler.Verbose, &r.result, argv...)
 		cancel()
 	})
 	if err != nil {
@@ -384,18 +395,6 @@ func (r *Request) writeHeader(status int) {
 	if status != 0 {
 		r.response.WriteHeader(status)
 		r.headersWritten = true
-	}
-}
-
-func (r *Request) evalCall(ctx context.Context, result any, argv ...string) error {
-	argv2 := []string{r.handler.Handler}
-	argv2 = append(argv2, argv...)
-	argv2 = append(argv2, r.handler.NixArgs...)
-
-	if r.handler.Pure && r.handler.EvalCache {
-		return nix.EvalCached(ctx, r.handler.InspectResult.PTY, r.handler.Verbose, result, argv2...)
-	} else {
-		return nix.Eval(ctx, r.handler.InspectResult.PTY, r.handler.Verbose, result, argv2...)
 	}
 }
 

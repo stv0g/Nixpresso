@@ -48,7 +48,7 @@ func cacheKey(argv ...string) uint64 {
 	return h.Sum64()
 }
 
-func EvalCached(ctx context.Context, withPTY bool, verbose int, result any, argv ...string) error {
+func EvalCached(ctx context.Context, withPTY bool, verbose int, result any, argv ...string) (err error) {
 	key := cacheKey(argv...)
 
 	resultBuf, ok := evalCache.Load(key)
@@ -63,12 +63,12 @@ func EvalCached(ctx context.Context, withPTY bool, verbose int, result any, argv
 			pty = util.StdinPTY | util.StderrPTY
 		}
 
-		stdout, _, err := Nix(ctx, pty, verbose, nil, nil, nil, argv2...)
+		resultBuf, _, err = Nix(ctx, pty, verbose, nil, nil, nil, argv2...)
 		if err != nil {
 			return err
 		}
 
-		evalCache.Store(key, stdout)
+		evalCache.Store(key, resultBuf)
 	} else {
 		slog.Info("Cache hit for evaluation", slog.Uint64("key", key))
 	}
