@@ -12,14 +12,26 @@ let
   inherit (lib)
     escapeShellArgs
     getExe
+    last
+    length
     mkEnableOption
     mkIf
     mkOption
     mkPackageOption
+    optionals
+    splitString
+    toInt
     types
     ;
 
   cfg = config.services.nixpresso;
+
+  listenPort =
+    let
+      parts = splitString ":" cfg.settings.listenAddress;
+    in
+    assert 2 == length parts;
+    toInt (last parts);
 in
 {
   options = {
@@ -29,7 +41,6 @@ in
       package = mkPackageOption pkgs "nixpresso" { };
 
       settings = {
-
         handler = mkOption {
           description = "Nix 'installable' (a Flake reference or attribute) Nix function to handle requests.";
           type = types.str;
@@ -280,7 +291,8 @@ in
 
           DynamicUser = true;
           UMask = "0007";
-          CapabilityBoundingSet = "";
+          CapabilityBoundingSet = optionals (listenPort < 1024) [ "CAP_NET_BIND_SERVICE" ];
+          AmbientCapabilities = optionals (listenPort < 1024) [ "CAP_NET_BIND_SERVICE" ];
           NoNewPrivileges = true;
           BindPaths = "/nix/";
 
