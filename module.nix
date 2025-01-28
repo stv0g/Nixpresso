@@ -290,7 +290,6 @@ in
           CacheDirectory = "nixpresso";
           PrivateTmp = true;
           PrivateDevices = true;
-          PrivateUsers = true;
           ProtectHostname = true;
           ProtectClock = true;
           ProtectKernelTunables = true;
