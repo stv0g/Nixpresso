@@ -29,6 +29,10 @@ While probably not a good idea, Nixpresso could be used to build fully featured 
 
 Check out the [demo](https://nixpresso.dev) for some of its potential use cases.
 
+> [!CAUTION]
+> Nix and by extension Nixpresso have not undergone comprehensive security testing to ensure resilience against the full spectrum of potential remote attack vectors. In partiuclar starting Nixpresso `--allow-mode run` can expose your system to remote code execution. Evaluations and builds are performed on the hosts Nix store which could expose sensitive information or allow attackers to poision store contents.
+> I currently recommend to run Nixpresso in a VM or sandboxes (e.g. systemd).
+
 ## Flowchart
 
 This depicts Nixpresso's flow for request handling:
