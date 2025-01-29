@@ -256,10 +256,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    nixpkgs.overlays = [
-      self.overlays.default
-    ];
-
     systemd.services = {
       nixpresso = {
         wants = [ "network.target" ];
