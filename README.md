@@ -289,13 +289,9 @@ A string containing a store path to a single file which contains the request bod
 - TLS version
 - and more...
 
-#### `nixOptions` (_AttrSet_[_String_])
+#### `options` (_AttrSet_[_String_])
 
-The `nixOptions` attribute set contains all Nix options passed via the `-- --option` CLI arguments.
-
-#### `handler` (_String_)
-
-The Flake reference and/or attribute of the current handler.
+An attribute set containing the options passed to Nixpresso.
 
 #### `basePath` (_String_)
 

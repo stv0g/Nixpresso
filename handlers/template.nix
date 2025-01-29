@@ -19,7 +19,6 @@ mkHandler
   (
     {
       # deadnix: skip
-      handler, # deadnix: skip
       proto, # deadnix: skip
       method, # deadnix: skip
       uri, # deadnix: skip
@@ -31,6 +30,7 @@ mkHandler
       remoteAddr, # deadnix: skip
       bodyHash, # deadnix: skip
       body, # deadnix: skip
+      options, # deadnix: skip
       tls,
       ...
     }@request:

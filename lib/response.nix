@@ -136,7 +136,7 @@ let
   setCacheHeaders =
     handlerFn:
     updateHandler handlerFn (
-      { handler, ... }@request:
+      { options, ... }@request:
       let
         response = handlerFn request;
         meta = handlerFn.meta or { };
@@ -150,7 +150,7 @@ let
         );
         cachable = {
           inherit requestCachable;
-          inherit handler;
+          inherit options;
         };
 
         headersCaching = {

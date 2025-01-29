@@ -4,7 +4,6 @@
 [
   {
     arguments = {
-      nixOptions = null;
       path = "/test";
       tls = null;
       uri = "/";

@@ -73,23 +73,6 @@ func FilterOptions(args []string) []string {
 	return opts
 }
 
-func OptionsFromFlags(args []string) map[string]string {
-	opts := map[string]string{}
-
-	for i := 0; i < len(args); i++ {
-		if args[i] == "--option" {
-			if i+2 >= len(args) {
-				continue
-			}
-
-			opts[args[i+1]] = args[i+2]
-			i += 2
-		}
-	}
-
-	return opts
-}
-
 type Environment struct {
 	CurrentSystem string
 	StoreDir      string

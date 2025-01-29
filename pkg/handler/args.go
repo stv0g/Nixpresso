@@ -16,11 +16,12 @@ import (
 	"strings"
 
 	"github.com/stv0g/nixpresso/pkg/nix"
+	"github.com/stv0g/nixpresso/pkg/options"
 	"github.com/stv0g/nixpresso/pkg/util"
 )
 
 var KnownArguments = []string{
-	"proto", "method", "uri", "host", "headers", "path", "query", "remoteAddr", "bodyHash", "body", "tls", "nixOptions", "handler", "basePath",
+	"proto", "method", "uri", "host", "headers", "path", "query", "remoteAddr", "bodyHash", "body", "tls", "options", "basePath",
 }
 
 type Arguments struct {
@@ -38,12 +39,10 @@ type Arguments struct {
 	TLS        *ConnectionState `json:"tls"`
 
 	// Environment
-	NixOptions map[string]string `json:"nixOptions"`
-	Handler    *string           `json:"handler,omitempty"`
-	BasePath   *string           `json:"basePath,omitempty"`
-
-	Result *EvalResult `json:"result,omitempty"`
-	Error  *Error      `json:"error"`
+	Options  *options.Options `json:"options,omitempty"`
+	BasePath *string          `json:"basePath"`
+	Result   *EvalResult      `json:"result,omitempty"`
+	Error    *Error           `json:"error"`
 }
 
 func (h *Handler) ArgumentsFromRequest(req *http.Request) (args Arguments, err error) {
@@ -95,12 +94,8 @@ func (h *Handler) ArgumentsFromRequest(req *http.Request) (args Arguments, err e
 		args.Body = &path
 	}
 
-	if _, ok := h.ExpectedArgs["nixOptions"]; ok {
-		args.NixOptions = nix.OptionsFromFlags(h.NixArgs)
-	}
-
-	if _, ok := h.ExpectedArgs["handler"]; ok {
-		args.Handler = &h.Handler
+	if _, ok := h.ExpectedArgs["options"]; ok {
+		args.Options = &h.Options
 	}
 
 	if _, ok := h.ExpectedArgs["basePath"]; ok {
