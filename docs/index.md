@@ -6,7 +6,7 @@ It is availble as a passthru from the main Nixpresso derivation. E.g:
 
 ```nix
 let
-  lib = nixpresso.lib;
+  lib = import "${builtins.fetchTarball "https://github.com/stv0g/Nixpresso/archive/refs/heads/main.tar.gz"}/lib" { };
 in
 lib.handlers.htmlError { status = 404; details = "Not found"; }
 ```
@@ -15,7 +15,7 @@ Or as a Flake output:
 
 ```nix
 let
-  inherit (builtins.getFlake "github:stv0g/nixpresso") lib;
+  inherit (builtins.getFlake "github:stv0g:nixpresso") lib;
 in
 lib.handlers.htmlError { status = 404; details = "Not found"; }
 ```

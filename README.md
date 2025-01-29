@@ -111,7 +111,7 @@ flowchart LR
   - Request & Response bodies
   - Request & Response body streaming
 
-- Included library functions (`nixpresso.lib`)
+- [Included library functions](./docs/index.md) (`nixpresso.lib`)
   - URL en- & decoding
   - Query-string / HTML Form & Cookie parsing
   - HTTP statuses
