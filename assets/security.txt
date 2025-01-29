@@ -1,0 +1,27 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Canonical: https://nixpresso.dev/.well-known/security.txt
+Contact: mailto:stv0g@0l.de
+Contact: matrix:@stv0ge:matrix.org
+Contact: mastodon:@stv0g@chaos.social
+Encryption: https://keys.openpgp.org/vks/v1/by-fingerprint/09BE3BAE8D55D4CD8579285A9675EAC34897E6E2
+Preferred-Languages: en, de
+Expires: 2025-12-31T18:37:07z
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXIkhKC7TGCTjpFNYbi8OvRZWIcEFAmeaqYcACgkQbi8OvRZW
+IcEdsQ//aHXB1BO9dScRLvtA5ZnNMXUmadsxbiRQ6URaOdt1GdzF8/qohcX2nWBw
+xaIT7wQf5yfSpC/Ahiit4qhsg5Q6Vm09mh4H54ERPQJAwDVQz2yqvht1dCi7hUtZ
+4ctiAiayoYBJaMZ7bSbTS/3ppSIrsQix6TBUSHrwujPCqeTTt0z0ttkWV/PLC0+F
+sAdAuqrS8l42sP9jGDMwRTxHBdD7o2hwzviDbMkHIGdblZwfKA+qAoTDVHwauUoJ
+EMj0Kgpy+Mu5OI8OhhGYpbV4zR7RXIwJbWoV31IBqk0wd4T/Ggtz1FTmmgfla6Zp
+gbi1YPa/aZ7YuKo/BVDs5HHKyZR9AvTzChaTE7iXtiN/PA8i+kYLdrvav1epl0Y0
+ZL96P3ot7NuGbNiY3KHZ5BO8SabfjUdPbQ1fRAe/r4WkAqdr8WUYD3XoPHrzIBJ+
+A55NZN4nwi/C79/J3BKaEcOFn+4RLE0Bgq/F9NjsDlEPVipogXEB97ACazumcyfa
+kg2koKdB8hFaea2BTKeKr9A016Oaru/fH8oYTfzNrapg6J9MG4igLFY2J2u4jMiy
+LYV/N5LAHOKTfuqBxJodzK0pyThZslPNbLAl7MOHxUwcObpmDYduutADZZLvV2Os
+DEO5dHH09bW/61/Jmwd+VIONCs5sz04HM+zK7r2LfVGb+AimBKw=
+=DNxU
+-----END PGP SIGNATURE-----

@@ -32,6 +32,14 @@ mkHandler
           body = nixpresso.assets;
           subPath = "images/nixpresso-favicon.svg";
         })
+        (handlers.ifPathEquals "/.well-known/security.txt" {
+          body = nixpresso.assets;
+          subPath = "security.txt";
+        })
+        (handlers.ifPathEquals "/robots.txt" {
+          body = nixpresso.assets;
+          subPath = "robots.txt";
+        })
       ] ++ exampleRoutes;
     }
   )

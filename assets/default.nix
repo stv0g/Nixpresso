@@ -12,6 +12,7 @@ buildNpmPackage {
   postInstall = ''
     cp ./dist/* $out
     cp -r ./images $out
+    cp *.txt $out
 
     rm -rf $out/lib
   '';
