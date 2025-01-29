@@ -11,6 +11,7 @@ path = [
      "assets/package-lock.json",
      "assets/package.json",
      "assets/images/*.svg",
+     "assets/*.txt",
      "handlers/examples/*.nix",
      "pkg/handler/*.nix",
      "handlers/playground/examples/*.nix",
