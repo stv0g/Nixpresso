@@ -41,6 +41,7 @@ mkHandler
         {
           method,
           body,
+          query,
           ...
         }:
         let
