@@ -26,7 +26,6 @@ lib.handlers.htmlError { status = 404; details = "Not found"; }
 * Customisation: [`nixpresso.lib.customisation`](./customisation.md)
 * Trivial Handlers: [`nixpresso.lib.handlers`](./handlers.md)
 * HTML escaping: [`nixpresso.lib.html`](./html.md)
-* HTTP query strings: [`nixpresso.lib.query`](./query.md)
 * Handlers support: [`nixpresso.lib.response`](./response.md)
 * Trivial helpers: [`nixpresso.lib.trivial`](./trivial.md)
 * URL parsing: [`nixpresso.lib.url`](./url.md)

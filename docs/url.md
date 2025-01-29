@@ -1,28 +1,54 @@
 # URL parsing {#sec-functions-library-url}
 
 
-## `nixpresso.lib.url.unescape` {#function-library-nixpresso.lib.url.unescape}
+## `nixpresso.lib.url.decodeQueryString` {#function-library-nixpresso.lib.url.decodeQueryString}
 
-Unescape a URL string.
+Parse a query string into a Nix attribute set.
 
 ### Example
 
 ```nix
-unescape "foo%20bar"
+parse "foo=bar&baz=qux"
 =>
-"foo bar"
+{
+  foo = "bar";
+  baz = "qux";
+}
 ```
 
 ### Type
 
 ```
-unescape :: String -> String
+parse :: String -> AttrSet
 ```
 
 ### Arguments
 
-url
-: A URL string
+qstr
+: A query string
+
+## `nixpresso.lib.url.encodeQueryString` {#function-library-nixpresso.lib.url.encodeQueryString}
+
+Serialize a Nix attribute set into a query string.
+
+### Example
+
+```nix
+encode { foo = "bar"; baz = "qux"; }
+=>
+"foo=bar&baz=qux"
+```
+
+### Type
+
+```
+encode :: AttrSet -> String
+```
+
+### Arguments
+
+values
+: A Nix attribute set
 
 ## `nixpresso.lib.url.escape` {#function-library-nixpresso.lib.url.escape}
 
@@ -72,5 +98,28 @@ full :: { host: String, uri: String, ?tls: Boolean } -> String
 
 request
 : A request object
+
+## `nixpresso.lib.url.unescape` {#function-library-nixpresso.lib.url.unescape}
+
+Unescape a URL string.
+
+### Example
+
+```nix
+unescape "foo%20bar"
+=>
+"foo bar"
+```
+
+### Type
+
+```
+unescape :: String -> String
+```
+
+### Arguments
+
+url
+: A URL string
 
 

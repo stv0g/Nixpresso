@@ -32,8 +32,8 @@ mkHandler
         cookie
         handlers
         html
-        query
         status
+        url
         ;
 
       cookies = cookie.parse headers;
@@ -54,7 +54,7 @@ mkHandler
         if method == "POST" then
           let
             bodyContents = readFile body;
-            values = query.decode bodyContents;
+            values = url.decodeQueryString bodyContents;
 
             inherit (values)
               action

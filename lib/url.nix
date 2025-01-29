@@ -6,15 +6,84 @@
 }:
 let
   inherit (lib)
-    replaceStrings
-    fixedWidthString
-    toHexString
-    mapAttrsToList
     attrNames
+    concatStringsSep
+    elemAt
     escapeURL
+    fixedWidthString
+    listToAttrs
+    mapAttrsToList
+    replaceStrings
+    splitString
+    toHexString
     ;
 
   asciiTable = import ./ascii-table.nix;
+
+  /**
+    Parse a query string into a Nix attribute set.
+
+    # Example
+
+    ```nix
+    parse "foo=bar&baz=qux"
+    =>
+    {
+      foo = "bar";
+      baz = "qux";
+    }
+    ```
+
+    # Type
+
+    ```
+    parse :: String -> AttrSet
+    ```
+
+    # Arguments
+
+    qstr
+    : A query string
+  */
+  decodeQueryString =
+    qstr:
+    listToAttrs (
+      map (
+        x:
+        let
+          parts = splitString "=" x;
+        in
+        {
+          name = unescape' (elemAt parts 0);
+          value = unescape' (elemAt parts 1);
+        }
+      ) (splitString "&" qstr)
+    );
+
+  /**
+    Serialize a Nix attribute set into a query string.
+
+    # Example
+
+    ```nix
+    encode { foo = "bar"; baz = "qux"; }
+    =>
+    "foo=bar&baz=qux"
+    ```
+
+    # Type
+
+    ```
+    encode :: AttrSet -> String
+    ```
+
+    # Arguments
+
+    values
+    : A Nix attribute set
+  */
+  encodeQueryString =
+    values: concatStringsSep "&" (mapAttrsToList (name: value: "${name}=${url.escape value}") values);
 
   /**
     Escape a URL string.
@@ -175,9 +244,11 @@ let
 in
 {
   inherit
-    unescape
-    unescape'
+    decodeQueryString
+    encodeQueryString
     escape
     full
+    unescape
+    unescape'
     ;
 }

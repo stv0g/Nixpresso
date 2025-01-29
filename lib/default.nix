@@ -26,7 +26,7 @@ let
     customisation = call ./customisation.nix { };
     handlers = call ./handlers.nix { };
     html = call ./html.nix { };
-    query = call ./query.nix { };
+    nix = call ./nix.nix { };
     response = call ./response.nix { };
     status = call ./status.nix { };
     trivial = call ./trivial.nix { };

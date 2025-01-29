@@ -26,7 +26,7 @@ let
     handlers
     html
     mkHandler
-    query
+    url
     ;
 in
 mkHandler
@@ -62,7 +62,7 @@ mkHandler
               '';
 
           bodyContents = readFile body;
-          values = query.decode bodyContents;
+          values = url.decodeQueryString bodyContents;
           exprString = if method == "POST" then values.expression else defaultExpression;
           exprFile = toFile "expression" exprString;
           expr = import exprFile;

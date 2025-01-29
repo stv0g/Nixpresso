@@ -18,7 +18,6 @@ let
   categories = {
     cookie = "HTTP Cookies";
     html = "HTML escaping";
-    query = "HTTP query strings";
     url = "URL parsing";
 
     customisation = "Customisation";
