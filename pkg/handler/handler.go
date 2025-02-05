@@ -13,15 +13,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/stv0g/nixpresso/pkg/cache"
 	"github.com/stv0g/nixpresso/pkg/nix"
 	"github.com/stv0g/nixpresso/pkg/options"
 	"github.com/stv0g/nixpresso/pkg/util"
 )
 
 type Handler struct {
-	options.Options
-	nix.Environment
-	InspectResult
+	opts          options.Options
+	env           nix.Environment
+	InspectResult InspectResult
 
 	Expression string
 	File       string
@@ -29,30 +30,32 @@ type Handler struct {
 	FlakeAttribute string
 	FlakeReference string
 	FlakeStorePath string
+
+	cache *cache.MemoryCache[cache.NamedStringKey, *EvalResult]
 }
 
 func NewHandler(opts options.Options) (h *Handler, err error) {
 	h = &Handler{
-		Options: opts,
+		opts: opts,
 	}
 
-	if h.Environment, err = nix.GetEnvironment(context.Background()); err != nil {
+	if h.env, err = nix.GetEnvironment(context.Background()); err != nil {
 		return nil, fmt.Errorf("failed to get Nix environment: %w", err)
 	}
 
 	// Get handler from command line
-	if idx := slices.Index(h.NixArgs, "--expr"); idx >= 0 {
-		if len(h.NixArgs) <= idx+1 {
+	if idx := slices.Index(h.opts.NixArgs, "--expr"); idx >= 0 {
+		if len(h.opts.NixArgs) <= idx+1 {
 			return nil, fmt.Errorf("missing argument to --expr")
 		}
-		h.Expression = h.NixArgs[idx+1]
-	} else if idx := slices.Index(h.NixArgs, "--file"); idx >= 0 {
-		if len(h.NixArgs) <= idx+1 {
+		h.Expression = h.opts.NixArgs[idx+1]
+	} else if idx := slices.Index(h.opts.NixArgs, "--file"); idx >= 0 {
+		if len(h.opts.NixArgs) <= idx+1 {
 			return nil, fmt.Errorf("missing argument to --file")
 		}
-		h.File = h.NixArgs[idx+1]
+		h.File = h.opts.NixArgs[idx+1]
 	} else {
-		if parts := strings.SplitN(h.Handler, "#", 2); len(parts) > 1 {
+		if parts := strings.SplitN(h.opts.Handler, "#", 2); len(parts) > 1 {
 			h.FlakeReference = parts[0]
 			h.FlakeAttribute = parts[1]
 		} else {
@@ -61,7 +64,7 @@ func NewHandler(opts options.Options) (h *Handler, err error) {
 
 		// Set default Flake attribute
 		if h.FlakeAttribute == "" {
-			h.FlakeAttribute = fmt.Sprintf("handlers.%s.default", h.CurrentSystem)
+			h.FlakeAttribute = fmt.Sprintf("handlers.%s.default", h.env.CurrentSystem)
 		}
 
 		// Make Flake reference path absolute
@@ -80,6 +83,12 @@ func NewHandler(opts options.Options) (h *Handler, err error) {
 
 	if err := h.inspect(); err != nil {
 		return nil, fmt.Errorf("failed to inspect handler: %w", err)
+	}
+
+	if h.InspectResult.Pure && h.opts.EvalCache {
+		if h.cache, err = cache.NewMemoryCache[cache.NamedStringKey, *EvalResult](16 << 10); err != nil {
+			return nil, fmt.Errorf("failed to create cache: %w", err)
+		}
 	}
 
 	return h, nil
@@ -117,16 +126,16 @@ func (h *Handler) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		timings: map[string]time.Duration{},
 	}
 
-	if h.MaxRequestTime > 0 {
+	if h.opts.MaxRequestTime > 0 {
 		ctx := req.Context()
-		ctx, cancel := context.WithTimeout(ctx, h.MaxRequestTime)
+		ctx, cancel := context.WithTimeout(ctx, h.opts.MaxRequestTime)
 		defer cancel()
 
 		r.request = req.WithContext(ctx)
 	}
 
-	if r.handler.MaxRequestBytes > 0 {
-		r.request.Body = http.MaxBytesReader(r.response, r.request.Body, r.handler.MaxRequestBytes)
+	if r.handler.opts.MaxRequestBytes > 0 {
+		r.request.Body = http.MaxBytesReader(r.response, r.request.Body, r.handler.opts.MaxRequestBytes)
 	}
 
 	if f, ok := r.response.(http.Flusher); ok {
@@ -147,11 +156,11 @@ func (h *Handler) checkPath(path string) bool {
 		return false
 	}
 
-	if h.AllowStore && strings.HasPrefix(path, h.StoreDir) {
+	if h.opts.AllowStore && strings.HasPrefix(path, h.env.StoreDir) {
 		return true
 	}
 
-	for _, allowedPath := range h.AllowedPaths {
+	for _, allowedPath := range h.opts.AllowedPaths {
 		if strings.HasPrefix(path, allowedPath) {
 			return true
 		}

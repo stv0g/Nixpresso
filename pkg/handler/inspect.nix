@@ -6,6 +6,5 @@ handler:
 {
   expectedArgs = functionArgs handler;
   pure = !builtins ? currentSystem;
-  inherit (builtins) nixPath;
 }
 // handler.meta or { }

@@ -6,6 +6,7 @@ package handler
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -19,6 +20,7 @@ import (
 
 	"al.essio.dev/pkg/shellescape"
 	"github.com/stv0g/nixpresso/pkg"
+	"github.com/stv0g/nixpresso/pkg/cache"
 	"github.com/stv0g/nixpresso/pkg/nix"
 	"github.com/stv0g/nixpresso/pkg/options"
 	"github.com/stv0g/nixpresso/pkg/util"
@@ -29,7 +31,7 @@ type Request struct {
 	request   *http.Request
 	response  http.ResponseWriter
 	arguments Arguments
-	result    EvalResult
+	result    *EvalResult
 
 	body           string
 	headersWritten bool
@@ -42,14 +44,17 @@ func (r *Request) Handle() (err error) {
 	}
 
 	if err = r.handle(); err != nil {
-		if _, ok := r.handler.ExpectedArgs["error"]; !ok {
+		slog.Error("Failed to handle request", slog.Any("error", err))
+
+		if _, ok := r.handler.InspectResult.ExpectedArgs["error"]; !ok {
 			return err
 		}
 
 		// In case the handler can handle errors, we pass the error and the previous evaluation result
 		// to the handler and evaluate again
-		r.arguments.Result = &r.result
+		r.arguments.Result = r.result
 		r.arguments.Error = NewError(err)
+		r.result = nil
 
 		if err = r.handle(); err != nil {
 			return err
@@ -64,11 +69,11 @@ func (r *Request) handle() error {
 		return fmt.Errorf("failed to evaluate: %w", err)
 	}
 
-	if !slices.Contains(r.handler.AllowedModes, r.result.Mode) {
+	if !slices.Contains(r.handler.opts.AllowedModes, r.result.Mode) {
 		return ForbiddenModeError(r.result.Mode)
 	}
 
-	if !slices.Contains(r.handler.AllowedTypes, r.result.Type) {
+	if !slices.Contains(r.handler.opts.AllowedTypes, r.result.Type) {
 		return ForbiddenTypeError(r.result.Type)
 	}
 
@@ -129,36 +134,68 @@ func (r *Request) eval() error {
 		return fmt.Errorf("failed to assemble Nix arguments: %w", err)
 	}
 
-	argv := []string{r.handler.Handler}
+	argv := []string{r.handler.opts.Handler}
 	argv = append(argv, "--apply", fmt.Sprintf("h: h %s", argsNix))
-	argv = append(argv, r.handler.NixArgs...)
+	argv = append(argv, r.handler.opts.NixArgs...)
 
-	var eval func(ctx context.Context, withPTY bool, verbose int, result any, argv ...string) error
-	if r.handler.Pure && r.handler.EvalCache {
-		eval = nix.EvalCached
-	} else {
-		eval = nix.Eval
+	var cacheKey cache.NamedStringKey
+	if r.canEvalCache() {
+		var argvCache []string
+		if len(r.handler.InspectResult.EvalCacheIgnore.Args) == 0 && len(r.handler.InspectResult.EvalCacheIgnore.Headers) == 0 {
+			argvCache = argv
+		} else if argvCache, err = r.evalArgs(true); err != nil {
+			return fmt.Errorf("failed to assemble Nix arguments for cache: %w", err)
+		}
+
+		cacheKey = cache.NamedStringKey(strings.Join(argvCache, " "))
+		if r.result, err = r.handler.cache.Get(cacheKey); err == nil {
+			slog.Debug("Cache hit",
+				slog.String("key", cacheKey.Name()))
+
+			if nixHeader, ok := r.result.Headers["Nix"]; ok {
+				nixHeader[0] += ", cached"
+			} else {
+				r.result.Headers["Nix"] = []string{"cached"}
+			}
+		} else {
+			if errors.Is(err, cache.ErrMiss) {
+				slog.Debug("Cache miss",
+					slog.String("key", cacheKey.Name()))
+			} else {
+				return fmt.Errorf("failed to get from cache: %w", err)
+			}
+		}
 	}
 
-	durEval := r.measure("eval", func() {
-		ctx, cancel := context.WithTimeout(r.request.Context(), r.handler.MaxEvalTime)
-		err = eval(ctx, r.handler.InspectResult.PTY, r.handler.Verbose, &r.result, argv...)
-		cancel()
-	})
-	if err != nil {
-		return err
-	}
+	if r.result == nil {
+		r.result = &EvalResult{}
 
-	if r.handler.Verbose >= 5 {
-		slog.Info("Finished evaluation",
-			slog.Duration("after", durEval))
-		util.DumpJSON(r.result)
-	} else {
-		slog.Info("Finished evaluation",
-			slog.Duration("after", durEval),
-			slog.String("body", r.result.Body),
-			slog.String("mode", string(r.result.Mode)),
-			slog.String("type", string(r.result.Type)))
+		durEval := r.measure("eval", func() {
+			ctx, cancel := context.WithTimeout(r.request.Context(), r.handler.opts.MaxEvalTime)
+			err = nix.Eval(ctx, r.handler.InspectResult.PTY, r.handler.opts.Verbose, &r.result, argv...)
+			cancel()
+		})
+		if err != nil {
+			return err
+		}
+
+		if r.handler.opts.Verbose >= 5 {
+			slog.Info("Finished evaluation",
+				slog.Duration("after", durEval))
+			util.DumpJSON(r.result)
+		} else {
+			slog.Info("Finished evaluation",
+				slog.Duration("after", durEval),
+				slog.String("body", r.result.Body),
+				slog.String("mode", string(r.result.Mode)),
+				slog.String("type", string(r.result.Type)))
+		}
+
+		if cacheKey != "" {
+			if err := r.handler.cache.Set(cacheKey, r.result, 60*time.Minute); err != nil {
+				return fmt.Errorf("failed to set cache: %w", err)
+			}
+		}
 	}
 
 	return nil
@@ -169,7 +206,7 @@ func (r *Request) build() (err error) {
 		slog.String("derivation", r.body))
 
 	argv := []string{}
-	argv = append(argv, nix.FilterOptions(r.handler.NixArgs)...)
+	argv = append(argv, nix.FilterOptions(r.handler.opts.NixArgs)...)
 
 	if r.result.Rebuild || (r.result.Mode == options.LogMode && r.result.Stream) {
 		argv = append(argv, "--rebuild")
@@ -182,8 +219,8 @@ func (r *Request) build() (err error) {
 	}
 
 	durBuild := r.measure("build", func() {
-		ctx, cancel := context.WithTimeout(r.request.Context(), r.handler.MaxBuildTime)
-		r.body, err = nix.Build(ctx, r.body, r.result.Output, r.result.PTY, r.handler.Verbose, stderr, argv...)
+		ctx, cancel := context.WithTimeout(r.request.Context(), r.handler.opts.MaxBuildTime)
+		r.body, err = nix.Build(ctx, r.body, r.result.Output, r.result.PTY, r.handler.opts.Verbose, stderr, argv...)
 		cancel()
 	})
 	if err != nil {
@@ -230,7 +267,7 @@ func (r *Request) run() (err error) {
 	}
 
 	argv := []string{}
-	argv = append(argv, r.handler.RunArgs...)
+	argv = append(argv, r.handler.opts.RunArgs...)
 	argv = append(argv, r.result.Args...)
 
 	if r.arguments.Body != nil {
@@ -245,21 +282,21 @@ func (r *Request) run() (err error) {
 		stdin = r.request.Body
 	}
 
-	slog.Debug("Starting run: " + shellescape.QuoteCommand(argv))
+	slog.Debug("Starting run: " + shellescape.QuoteCommand(append([]string{r.body}, argv...)))
 
 	var cmd *exec.Cmd
 	durRun := r.measure("run", func() {
-		ctx, cancel := context.WithTimeout(r.request.Context(), r.handler.MaxRunTime)
+		ctx, cancel := context.WithTimeout(r.request.Context(), r.handler.opts.MaxRunTime)
 		cmd = exec.CommandContext(ctx, r.body, argv...)
 		for key, value := range r.result.Env {
 			cmd.Env = append(cmd.Env, key+"="+value)
 		}
 
-		_, _, err = util.Run(cmd, pty, r.handler.Verbose, stdin, stdout, stderr)
+		_, _, err = util.Run(cmd, pty, r.handler.opts.Verbose, stdin, stdout, stderr)
 		cancel()
 	})
 	if err != nil {
-		return fmt.Errorf("failed to run: %w", err)
+		return err
 	}
 
 	if !r.result.Stream {
@@ -287,8 +324,8 @@ func (r *Request) serve() (err error) {
 
 	switch r.result.Type {
 	case options.StringType:
-		if len(r.result.Body) > int(r.handler.MaxResponseBytes) {
-			return fmt.Errorf("response body exceeds maximum size: %d > %d Bytes", len(r.result.Body), r.handler.MaxResponseBytes)
+		if len(r.result.Body) > int(r.handler.opts.MaxResponseBytes) {
+			return fmt.Errorf("response body exceeds maximum size: %d > %d Bytes", len(r.result.Body), r.handler.opts.MaxResponseBytes)
 		}
 
 		rd = strings.NewReader(r.result.Body)
@@ -306,9 +343,9 @@ func (r *Request) serve() (err error) {
 
 		if fi, err := os.Stat(r.body); err != nil {
 			return fmt.Errorf("failed to stat response body path '%s': %w", r.body, err)
-		} else if int(fi.Size()) > int(r.handler.MaxResponseBytes) {
-			return fmt.Errorf("response body exceeds maximum size: %d > %d Bytes", len(r.result.Body), r.handler.MaxResponseBytes)
-		} else if isStorePath := strings.HasPrefix(r.body, r.handler.StoreDir); !isStorePath {
+		} else if int(fi.Size()) > int(r.handler.opts.MaxResponseBytes) {
+			return fmt.Errorf("response body exceeds maximum size: %d > %d Bytes", len(r.result.Body), r.handler.opts.MaxResponseBytes)
+		} else if isStorePath := strings.HasPrefix(r.body, r.handler.env.StoreDir); !isStorePath {
 			modTime = fi.ModTime()
 		}
 
@@ -345,7 +382,7 @@ func (r *Request) log() error {
 		pty = util.StdinPTY | util.StderrPTY
 	}
 
-	if _, _, err := nix.Nix(r.request.Context(), pty, r.handler.Verbose, nil, r.response, nil, "log", r.body); err != nil {
+	if _, _, err := nix.Nix(r.request.Context(), pty, r.handler.opts.Verbose, nil, r.response, nil, "log", r.body); err != nil {
 		return fmt.Errorf("failed to get log: %w", err)
 	}
 
@@ -370,7 +407,7 @@ func (r *Request) derivation() error {
 		pty = util.StdinPTY | util.StderrPTY
 	}
 
-	if _, _, err := nix.Nix(r.request.Context(), pty, r.handler.Verbose, nil, r.response, nil, args...); err != nil {
+	if _, _, err := nix.Nix(r.request.Context(), pty, r.handler.opts.Verbose, nil, r.response, nil, args...); err != nil {
 		return fmt.Errorf("failed to get derivation: %w", err)
 	}
 
@@ -383,14 +420,17 @@ func (r *Request) writeHeader(status int) {
 		return
 	}
 
-	timingsFormatted := []string{}
-	for name, dur := range r.timings {
-		timingsFormatted = append(timingsFormatted, fmt.Sprintf("%s;dur=%d", name, dur.Milliseconds()))
-	}
-
 	hdr := r.response.Header()
-	hdr.Set("Server-Timing", strings.Join(timingsFormatted, ", "))
-	hdr.Set("Server", fmt.Sprintf("Nixpresso/%s (Nix %s, %d)", pkg.Version, r.handler.NixVersion, r.handler.LangVersion))
+	hdr.Set("Server", fmt.Sprintf("Nixpresso/%s (Nix %s, %d)", pkg.Version, r.handler.env.NixVersion, r.handler.env.LangVersion))
+
+	if len(r.timings) > 0 {
+		timingsFormatted := []string{}
+		for name, dur := range r.timings {
+			timingsFormatted = append(timingsFormatted, fmt.Sprintf("%s;dur=%d", name, dur.Milliseconds()))
+		}
+
+		hdr.Set("Server-Timing", strings.Join(timingsFormatted, ", "))
+	}
 
 	if status != 0 {
 		r.response.WriteHeader(status)
@@ -420,4 +460,53 @@ func (r *Request) measure(id string, cb func()) time.Duration {
 	r.timings[id] = dur
 
 	return dur
+}
+
+func (r *Request) evalArgs(forCache bool) ([]string, error) {
+	args := r.arguments
+
+	if forCache {
+		args = util.FilterFieldsByTag(r.arguments, "json", func(field string) bool {
+			return !slices.Contains(r.handler.InspectResult.EvalCacheIgnore.Args, field)
+		})
+
+		if args.Header != nil {
+			headers := map[string][]string(*args.Header)
+
+			filteredHeaders := util.FilterMapByKey(headers, func(k string) bool {
+				return !slices.Contains(r.handler.InspectResult.EvalCacheIgnore.Headers, k)
+			})
+
+			args.Header = (*http.Header)(&filteredHeaders)
+		}
+	}
+
+	argsNix, err := nix.Marshal(args, "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to assemble Nix arguments: %w", err)
+	}
+
+	argv := []string{r.handler.opts.Handler}
+	argv = append(argv, "--apply", fmt.Sprintf("h: h %s", argsNix))
+	argv = append(argv, r.handler.opts.NixArgs...)
+
+	return argv, nil
+}
+
+func (r *Request) canEvalCache() bool {
+	if r.handler.cache == nil {
+		return false
+	}
+
+	if ccHdr := r.request.Header.Get("Cache-Control"); ccHdr != "" {
+		for _, ccDirective := range strings.Split(ccHdr, ",") {
+			ccDirective = strings.TrimSpace(ccDirective)
+
+			if ccDirective == "no-cache" {
+				return false
+			}
+		}
+	}
+
+	return true
 }

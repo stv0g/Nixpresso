@@ -6,10 +6,25 @@ package nix
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"reflect"
 	"slices"
+	"strconv"
 	"strings"
 )
+
+type Encoder struct {
+	wr     io.Writer
+	Indent string
+}
+
+func NewEncoder(wr io.Writer, indent string) *Encoder {
+	return &Encoder{wr: wr, Indent: indent}
+}
+
+func (e *Encoder) Encode(v any) error {
+	return marshalValue(reflect.ValueOf(v), e.wr, e.Indent, 0)
+}
 
 type Marshaler interface {
 	MarshalNix() (string, error)
@@ -18,19 +33,25 @@ type Marshaler interface {
 func Marshal(v any, indent string) (string, error) {
 	var buf bytes.Buffer
 
-	if err := marshalValue(reflect.ValueOf(v), &buf, indent, 0); err != nil {
+	if err := NewEncoder(&buf, indent).Encode(v); err != nil {
 		return "", err
 	}
 
 	return buf.String(), nil
 }
 
-func marshalValue(v reflect.Value, buf *bytes.Buffer, indent string, level int) error {
+func marshalValue(v reflect.Value, wr io.Writer, indent string, level int) (err error) {
 	p := strings.Repeat(indent, level)
 
-	if v.Kind() == reflect.Pointer && v.IsNil() {
-		buf.WriteString("null")
+	writeString := func(s string) error {
+		if _, err := wr.Write([]byte(s)); err != nil {
+			return fmt.Errorf("failed to write: %w", err)
+		}
 		return nil
+	}
+
+	if v.Kind() == reflect.Pointer && v.IsNil() {
+		return writeString("null")
 	}
 
 	switch w := v.Interface().(type) {
@@ -40,105 +61,124 @@ func marshalValue(v reflect.Value, buf *bytes.Buffer, indent string, level int) 
 			return err
 		}
 
-		buf.WriteString(n)
-		return nil
-	case error:
-		v = reflect.ValueOf(w.Error())
-	case fmt.Stringer:
-		v = reflect.ValueOf(w.String())
-	default:
-	}
-
-	switch v.Kind() {
-	case reflect.Ptr:
-		if v.IsNil() {
-			buf.WriteString("null")
-			return nil
-		}
-
-		return marshalValue(v.Elem(), buf, indent, level)
-	case reflect.String:
-		fmt.Fprintf(buf, `"%s"`, EscapeString(v.String()))
-
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		fmt.Fprintf(buf, "%d", v.Int())
-
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		fmt.Fprintf(buf, "%d", v.Uint())
-
-	case reflect.Float32, reflect.Float64:
-		fmt.Fprintf(buf, "%f", v.Float())
-
-	case reflect.Bool:
-		if v.Bool() {
-			buf.WriteString("true")
-		} else {
-			buf.WriteString("false")
-		}
-
-	case reflect.Slice, reflect.Array:
-		if indent == "" {
-			buf.WriteString("[ ")
-		} else {
-			buf.WriteString("[\n")
-		}
-
-		for i := 0; i < v.Len(); i++ {
-			if indent != "" {
-				buf.WriteString(p + indent)
-			}
-
-			if err := marshalValue(v.Index(i), buf, indent, level+1); err != nil {
-				return err
-			}
-
-			if indent == "" {
-				buf.WriteString(" ")
-			} else {
-				buf.WriteString("\n")
-			}
-		}
-		buf.WriteString(p + "]")
-
-	case reflect.Map, reflect.Struct:
-		kvs, err := keyValues(v, "nix", "json")
-		if err != nil {
+		if err := writeString(n); err != nil {
 			return err
 		}
 
-		// Sort attributes alphabetically
-		slices.SortFunc(kvs, func(a, b keyValue) int {
-			return strings.Compare(a.Key, b.Key)
-		})
+	case error:
+		fmt.Fprintf(wr, `"%s"`, EscapeString(w.Error()))
 
-		if indent == "" {
-			buf.WriteString(p + "{ ")
-		} else {
-			buf.WriteString("{\n")
-		}
+	case fmt.Stringer:
+		fmt.Fprintf(wr, `"%s"`, EscapeString(w.String()))
 
-		for _, kv := range kvs {
-			if indent != "" {
-				buf.WriteString(p + indent)
+	case string:
+		fmt.Fprintf(wr, `"%s"`, EscapeString(w))
+
+	case int, int8, int16, int32, int64:
+		fmt.Fprintf(wr, "%d", w)
+
+	case uint, uint8, uint16, uint32, uint64:
+		fmt.Fprintf(wr, "%d", w)
+
+	case float32, float64:
+		fmt.Fprintf(wr, "%f", w)
+
+	case bool:
+		fmt.Fprint(wr, strconv.FormatBool(w))
+
+	default:
+		switch v.Kind() {
+		case reflect.Ptr:
+			return marshalValue(v.Elem(), wr, indent, level)
+
+		case reflect.Slice, reflect.Array:
+			if indent == "" {
+				err = writeString("[ ")
+			} else {
+				err = writeString("[\n")
 			}
-
-			buf.WriteString(kv.Key)
-			buf.WriteString(" = ")
-
-			if err := marshalValue(kv.Value, buf, indent, level+1); err != nil {
+			if err != nil {
 				return err
 			}
 
-			if indent == "" {
-				buf.WriteString("; ")
-			} else {
-				buf.WriteString(";\n")
-			}
-		}
-		buf.WriteString(p + "}")
+			for i := 0; i < v.Len(); i++ {
+				if indent != "" {
+					if err = writeString(p + indent); err != nil {
+						return err
+					}
+				}
 
-	default:
-		return fmt.Errorf("unsupported type: %s", v.Type())
+				if err := marshalValue(v.Index(i), wr, indent, level+1); err != nil {
+					return err
+				}
+
+				if indent == "" {
+					err = writeString(" ")
+				} else {
+					err = writeString("\n")
+				}
+				if err != nil {
+					return err
+				}
+			}
+			if err = writeString(p + "]"); err != nil {
+				return err
+			}
+
+		case reflect.Map, reflect.Struct:
+			kvs, err := keyValues(v, "nix", "json")
+			if err != nil {
+				return err
+			}
+
+			// Sort attributes alphabetically
+			slices.SortFunc(kvs, func(a, b keyValue) int {
+				return strings.Compare(a.Key, b.Key)
+			})
+
+			if indent == "" {
+				err = writeString(p + "{ ")
+			} else {
+				err = writeString("{\n")
+			}
+			if err != nil {
+				return err
+			}
+
+			for _, kv := range kvs {
+				if indent != "" {
+					if err := writeString(p + indent); err != nil {
+						return err
+					}
+				}
+
+				if err := writeString(kv.Key); err != nil {
+					return err
+				}
+				if err := writeString(" = "); err != nil {
+					return err
+				}
+
+				if err := marshalValue(kv.Value, wr, indent, level+1); err != nil {
+					return err
+				}
+
+				if indent == "" {
+					err = writeString("; ")
+				} else {
+					err = writeString(";\n")
+				}
+				if err != nil {
+					return err
+				}
+			}
+			if err = writeString(p + "}"); err != nil {
+				return err
+			}
+
+		default:
+			return fmt.Errorf("unsupported type: %s", v.Type())
+		}
 	}
 
 	return nil

@@ -74,10 +74,10 @@ func FilterOptions(args []string) []string {
 }
 
 type Environment struct {
-	CurrentSystem string
-	StoreDir      string
-	LangVersion   int
-	NixVersion    string
+	CurrentSystem string `json:"currentSystem"`
+	StoreDir      string `json:"storeDir"`
+	LangVersion   int    `json:"langVersion"`
+	NixVersion    string `json:"nixVersion"`
 }
 
 func GetEnvironment(ctx context.Context) (e Environment, err error) {

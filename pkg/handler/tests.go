@@ -42,7 +42,7 @@ func (tc *TestCase) Run(h *Handler, overwriteResults bool) (err error) {
 		return fmt.Errorf("failed to run test case: %w", err)
 	}
 
-	tc.ActualResult = &req.result
+	tc.ActualResult = req.result
 
 	er, err := json.MarshalIndent(tc.ExpectedResult, "", "  ")
 	if err != nil {

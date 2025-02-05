@@ -20,10 +20,6 @@ import (
 	"github.com/stv0g/nixpresso/pkg/util"
 )
 
-var KnownArguments = []string{
-	"proto", "method", "uri", "host", "headers", "path", "query", "remoteAddr", "bodyHash", "body", "tls", "options", "basePath",
-}
-
 type Arguments struct {
 	// Request
 	Proto      *string          `json:"proto,omitempty"`
@@ -36,55 +32,57 @@ type Arguments struct {
 	RemoteAddr *string          `json:"remoteAddr,omitempty"`
 	BodyHash   *string          `json:"bodyHash,omitempty"`
 	Body       *string          `json:"body,omitempty"`
-	TLS        *ConnectionState `json:"tls"`
+	TLS        *ConnectionState `json:"tls,omitempty"`
 
 	// Environment
 	Options  *options.Options `json:"options,omitempty"`
-	BasePath *string          `json:"basePath"`
-	Result   *EvalResult      `json:"result,omitempty"`
-	Error    *Error           `json:"error"`
+	BasePath *string          `json:"basePath,omitempty"`
+
+	// Error handling
+	Error  *Error      `json:"error"`
+	Result *EvalResult `json:"result,omitempty"`
 }
 
 func (h *Handler) ArgumentsFromRequest(req *http.Request) (args Arguments, err error) {
-	if _, ok := h.ExpectedArgs["proto"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["proto"]; ok {
 		args.Proto = &req.Proto
 	}
 
-	if _, ok := h.ExpectedArgs["method"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["method"]; ok {
 		args.Method = &req.Method
 	}
 
-	if _, ok := h.ExpectedArgs["uri"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["uri"]; ok {
 		args.RequestURI = &req.RequestURI
 	}
 
-	if _, ok := h.ExpectedArgs["headers"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["headers"]; ok {
 		args.Header = &req.Header
 	}
 
-	if _, ok := h.ExpectedArgs["query"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["query"]; ok {
 		q := req.URL.Query()
 		args.Query = &q
 	}
 
-	if _, ok := h.ExpectedArgs["path"]; ok {
-		path := strings.TrimPrefix(req.URL.Path, h.BasePath)
+	if _, ok := h.InspectResult.ExpectedArgs["path"]; ok {
+		path := strings.TrimPrefix(req.URL.Path, h.opts.BasePath)
 		args.Path = &path
 	}
 
-	if _, ok := h.ExpectedArgs["host"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["host"]; ok {
 		args.Host = &req.Host
 	}
 
-	if _, ok := h.ExpectedArgs["remoteAddr"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["remoteAddr"]; ok {
 		args.RemoteAddr = &req.RemoteAddr
 	}
 
-	if _, ok := h.ExpectedArgs["tls"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["tls"]; ok {
 		args.TLS = convertConnectionState(req.TLS)
 	}
 
-	if _, ok := h.ExpectedArgs["bodyHash"]; ok {
+	if _, ok := h.InspectResult.ExpectedArgs["bodyHash"]; ok {
 		hash, path, err := nix.AddToStore(req.Context(), req.Body, "body")
 		if err != nil {
 			return args, fmt.Errorf("failed to add body to store: %w", err)
@@ -94,12 +92,12 @@ func (h *Handler) ArgumentsFromRequest(req *http.Request) (args Arguments, err e
 		args.Body = &path
 	}
 
-	if _, ok := h.ExpectedArgs["options"]; ok {
-		args.Options = &h.Options
+	if _, ok := h.InspectResult.ExpectedArgs["options"]; ok {
+		args.Options = &h.opts
 	}
 
-	if _, ok := h.ExpectedArgs["basePath"]; ok {
-		args.BasePath = &h.BasePath
+	if _, ok := h.InspectResult.ExpectedArgs["basePath"]; ok {
+		args.BasePath = &h.opts.BasePath
 	}
 
 	return args, nil
