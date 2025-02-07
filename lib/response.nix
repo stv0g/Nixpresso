@@ -5,6 +5,7 @@
   status,
   trivial,
   handlers,
+  html,
 }:
 let
   inherit (builtins)
@@ -12,9 +13,11 @@ let
     hashString
     path
     toJSON
+    head
     ;
   inherit (lib)
     concatStringsSep
+    elem
     functionArgs
     getAttrs
     inPureEvalMode
@@ -26,19 +29,22 @@ let
     optional
     optionalAttrs
     optionals
+    optionalString
     pipe
     recursiveUpdate
+    splitString
     toList
+    trim
     typeOf
     ;
   inherit (trivial)
     updateHandler
-    isJSONSerializable
+    updateMeta
+    isSerializable
     toFunctor
     ;
   inherit (handlers)
-    htmlErrorEval
-    ifPred'
+    htmlError
     ;
 
   responseDefaults = {
@@ -57,20 +63,18 @@ let
   };
 
   metaDefaults = {
-    cacheHeaders = [
-      "If-None-Match"
-      "Pragma"
-      "Cache-Control"
-    ];
+    evalCacheIgnore = {
+      headers = [ ];
 
-    cacheArgs = [
-      "remoteAddr"
-    ];
+      args = [
+        "remoteAddr"
+      ];
+    };
 
     evalArgs = [ ];
   };
 
-  setResponseDefaults =
+  withResponseDefaults =
     handler:
     updateHandler handler (
       request:
@@ -80,16 +84,44 @@ let
       responseDefaults // response
     );
 
-  setMetaDefaults =
-    meta: handler:
+  withMetaDefaults =
+    metaExtra: handler:
+    let
+      metaHandler = handler.meta or { };
+    in
     (
       handler
       // {
-        meta = metaDefaults // (handler.meta or { }) // meta;
+        meta = updateMeta metaHandler (updateMeta metaDefaults metaExtra);
       }
     );
 
-  passRequestBodyAsDrv =
+  checkModeType =
+    handler:
+    updateHandler handler (
+      { options, ... }@request:
+      let
+        response = handler request;
+      in
+      if !elem response.mode options.allowedModes then
+        handlers.htmlError {
+          status = status.serviceUnavailable;
+          details = ''
+            This handler requires the ${response.mode} mode.
+          '';
+        }
+      else if !elem response.type options.allowedTypes then
+        handlers.htmlError {
+          status = status.serviceUnavailable;
+          details = ''
+            This handler requires the ${response.type} type.
+          '';
+        }
+      else
+        response
+    );
+
+  withRequestBodyDrv =
     handler:
     let
       args = functionArgs handler;
@@ -133,7 +165,7 @@ let
       if isCached then responseCached else responseUncached
     );
 
-  setCacheHeaders =
+  withCacheHeaders =
     handlerFn:
     updateHandler handlerFn (
       { options, ... }@request:
@@ -195,7 +227,7 @@ let
                 Content-type = "text/plain; charset=utf-8";
               };
             }
-          else if isJSONSerializable body then
+          else if isSerializable body then
             {
               body = toJSON body;
               type = "string";
@@ -255,9 +287,48 @@ let
       }
     );
 
-  handleError = ifPred' ({ error, ... }: error != null) htmlErrorEval;
-in
-{
+  handleError =
+    handler:
+    updateHandler handler (
+      { error, headers, ... }@request:
+      let
+        isError = error != null;
+        accepts = map trim (splitString "," (head (headers.Accept or [ "" ])));
+        acceptsHTML = elem "text/html" accepts;
+      in
+      if isError then
+        (
+          responseDefaults
+          // (
+            if acceptsHTML then
+              htmlError {
+                status = status.internalServerError;
+                details = ''
+                  <p>An error occurred:</p>
+                  <pre class="error"><code>${error.error}</code></pre>
+                  ${optionalString (
+                    error ? stdout
+                  ) "<pre class=\"terminal\"><code>${html.escape error.stdout}</code></pre>"}
+                  ${optionalString (
+                    error ? stderr
+                  ) "<pre class=\"terminal\"><code>${html.escape error.stderr}</code></pre>"}
+                '';
+              }
+            else
+              {
+                body = ''
+                  An error occurred:
+                  ${error.error}
+                  ${optionalString (error ? stdout) "stdout: ${error.stdout}"}
+                  ${optionalString (error ? stderr) "stderr: ${error.stderr}"}
+                '';
+              }
+          )
+        )
+      else
+        handler request
+    );
+
   /**
     Create a new handler.
   */
@@ -265,14 +336,18 @@ in
     meta: handler:
     pipe handler [
       toFunctor
-      setResponseDefaults
-      (setMetaDefaults meta)
-      passRequestBodyAsDrv
+      withResponseDefaults
+      (withMetaDefaults meta)
+      withRequestBodyDrv
       checkCacheHeaders
-      setCacheHeaders
-      fixupResponseBodyType
-      setNixHeader
+      withCacheHeaders
       handleError
+      fixupResponseBodyType
+      checkModeType
+      setNixHeader
       fixupResponseHeaders
     ];
+in
+{
+  inherit mkHandler;
 }

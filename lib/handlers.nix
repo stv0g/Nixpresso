@@ -23,10 +23,10 @@ let
     isPath
     mapAttrsToList
     match
+    mirrorFunctionArgs
     optionalString
     pathExists
     pipe
-    recursiveUpdate
     removePrefix
     removeSuffix
     reverseList
@@ -70,7 +70,7 @@ let
       meta = updateMeta matchHandlerMeta fallbackHandlerMeta;
     };
 
-  ifPred' = pred: ifPred (request: if pred request then { } else null);
+  ifPred' = pred: ifPred (mirrorFunctionArgs pred (request: if pred request then { } else null));
 
   ifPath =
     pred:
@@ -240,47 +240,50 @@ let
       script ? "",
       ...
     }@rest:
-    (recursiveUpdate {
-      headers = {
-        Content-Type = "text/html; charset=utf-8";
-      };
+    (
+      rest
+      // {
+        headers = (rest.headers or { }) // {
+          Content-Type = "text/html; charset=utf-8";
+        };
 
-      type = "string";
-      mode = "serve";
+        type = "string";
+        mode = "serve";
 
-      body = ''
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <title>${title}</title>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            
-            <link rel="stylesheet" href="/assets/bundle.css" rel="stylesheet">
-            <link rel="icon" href="/assets/images/nixpresso-favicon.svg" sizes="32x32" type="image/svg+xml" />
-            <link rel="apple-touch-icon" href="/assets/images/nixpresso-icon.svg" type="image/svg+xml" />
+        body = ''
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <title>${title}</title>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              
+              <link rel="stylesheet" href="/assets/bundle.css" rel="stylesheet">
+              <link rel="icon" href="/assets/images/nixpresso-favicon.svg" sizes="32x32" type="image/svg+xml" />
+              <link rel="apple-touch-icon" href="/assets/images/nixpresso-icon.svg" type="image/svg+xml" />
 
-            ${head}
-          </head>
-          <body class="${concatStringsSep " " bodyClasses}">
-            <header>
-              ${header}
-            </header>
+              ${head}
+            </head>
+            <body class="${concatStringsSep " " bodyClasses}">
+              <header>
+                ${header}
+              </header>
 
-            <main>
-              ${main}
-            </main>
+              <main>
+                ${main}
+              </main>
 
-            <footer>
-              ${footer}
-            </footer>
+              <footer>
+                ${footer}
+              </footer>
 
-            <script type="module" src="/assets/bundle.js"></script>
+              <script type="module" src="/assets/bundle.js"></script>
 
-            ${script}
-          </body>
-        </html>'';
-    } rest);
+              ${script}
+            </body>
+          </html>'';
+      }
+    );
 
   /**
      Render a HTML error page.
@@ -289,34 +292,18 @@ let
     {
       status ? _status.internalServerError,
       details ? "Sorry, something went wrong.",
-    }:
-    html {
-      status = status.code;
-      title = "Error";
-      main = ''
-        <h2>${status.message} (${toString status.code})</h2>
-        <p>${details}</p>
-      '';
-    };
-
-  htmlErrorEval =
-    {
-      error,
-      ...
-    }:
-    htmlError {
-      status = status.internalServerError;
-      details = ''
-        <p>An error occurred</p>
-        <pre class="error"><code>${error.error}</code></pre>
-        ${optionalString (
-          error ? stdout
-        ) "<pre class=\"terminal\"><code>${lib'.html.escape error.stdout}</code></pre>"}
-        ${optionalString (
-          error ? stderr
-        ) "<pre class=\"terminal\"><code>${lib'.html.escape error.stderr}</code></pre>"}
-      '';
-    };
+    }@rest:
+    html (
+      rest
+      // {
+        status = status.code;
+        title = "Error";
+        main = ''
+          <h2>${status.message} (${toString status.code})</h2>
+          <p>${details}</p>
+        '';
+      }
+    );
 
   /**
     Redirect to a different location.
@@ -359,6 +346,5 @@ in
     redirect
     html
     htmlError
-    htmlErrorEval
     ;
 }

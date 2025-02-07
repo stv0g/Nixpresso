@@ -28,8 +28,6 @@ mkHandler
             echo "Step $i (some very long line for enforce buffer flushing)"
             sleep 0.1
           done
-
-          exit 255
         '';
       };
 

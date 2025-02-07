@@ -90,7 +90,7 @@ mkHandler
             Have a look at the playground to see all features in action.
           </p>
           <center>
-            <a href="/playground/"><button class="large contrast">Go to playground 🎲</button></a>
+            <a href="/playground/"><button class="large contrast">Go to Playground 🎲</button></a>
           </center>
         </section>
         <section>

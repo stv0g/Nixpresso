@@ -21,7 +21,7 @@ let
     # Type
 
     ```
-    isJSONSerializable :: Any -> Bool
+    isSerializable :: Any -> Bool
     ```
 
     # Arguments
@@ -29,7 +29,7 @@ let
     b
     : A value
   */
-  isJSONSerializable = b: isAttrs b || isList b || isString b || isBool b || isInt b || isFloat b;
+  isSerializable = b: isAttrs b || isList b || isString b || isBool b || isInt b || isFloat b;
 
   /**
     Check if a value is a functor.
@@ -76,19 +76,14 @@ let
 
   updateMeta =
     old: new:
-    let
-      oldCacheHeaders = old.cacheHeaders or [ ];
-      newCacheHeaders = new.cacheHeaders or [ ];
-
-      oldCacheArgs = old.cacheArgs or [ ];
-      newCacheArgs = new.cacheArgs or [ ];
-    in
     (
       old
       // new
       // {
-        cacheHeaders = unique (oldCacheHeaders ++ newCacheHeaders);
-        cacheArgs = unique (oldCacheArgs ++ newCacheArgs);
+        evalCacheIgnore = {
+          headers = unique (old.evalCacheIgnore.headers or [ ] ++ new.evalCacheIgnore.headers or [ ]);
+          args = unique (old.evalCacheIgnore.args or [ ] ++ new.evalCacheIgnore.args or [ ]);
+        };
         pty = (old.pty or false) || (new.pty or false);
       }
     );
@@ -115,7 +110,7 @@ in
 {
   inherit
     isFunctor
-    isJSONSerializable
+    isSerializable
     toFunctor
     updateHandler
     updateMeta

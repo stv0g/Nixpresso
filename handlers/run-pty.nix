@@ -35,17 +35,15 @@ mkHandler
 
         script = ''
           <script type="module" >
-            import { createTerminal } from '/assets/bundle.js';
-            
+            import { streamToTerminal } from '/assets/bundle.js';
+
             document.addEventListener("DOMContentLoaded", async () => {
-              let pre = document.getElementById('terminal');
-              let response = await fetch('run');
-              let out = await response.text();
+              const url = new URL(window.location.href);
+              url.pathname += "/run";
+              
+              const result = document.getElementById('terminal');
 
-              pre.terminal.reset();
-              pre.terminal.write(out);
-
-              console.log("Fetched")
+              await streamToTerminal(terminal.terminal, url.href);
             });
           </script>
         '';

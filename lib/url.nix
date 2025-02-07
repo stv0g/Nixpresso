@@ -83,7 +83,7 @@ let
     : A Nix attribute set
   */
   encodeQueryString =
-    values: concatStringsSep "&" (mapAttrsToList (name: value: "${name}=${url.escape value}") values);
+    values: concatStringsSep "&" (mapAttrsToList (name: value: "${name}=${escape value}") values);
 
   /**
     Escape a URL string.

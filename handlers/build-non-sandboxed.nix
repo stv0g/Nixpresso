@@ -13,6 +13,7 @@ let
   inherit (builtins) getEnv;
   inherit (nixpresso.lib)
     handlers
+    nix
     mkHandler
     ;
 in
@@ -22,10 +23,12 @@ mkHandler
   }
   (
     {
-      nixOptions,
+      options,
       ...
     }:
     let
+      nixOptions = nix.optionsFromArgs options;
+
       hasRelaxedSandbox =
         nixOptions.sandbox or "true" == "relaxed" || nixOptions.sandbox or "true" == "false";
 
