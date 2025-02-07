@@ -7,7 +7,7 @@ buildNpmPackage {
   version = "1.0";
 
   src = ./.;
-  npmDepsHash = "sha256-6ludyZDAatNz9pRh4VwTXXsS8gswTikoYsmJy6xh5ns=";
+  npmDepsHash = "sha256-zu0hod7FNooWeGvXUCDmni6xo/U5oVaJ5wgRbYGUbhU=";
 
   postInstall = ''
     cp ./dist/* $out

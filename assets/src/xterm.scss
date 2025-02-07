@@ -5,10 +5,11 @@
 @use "~@xterm/xterm/css/xterm.css";
 @use "~@picocss/pico/scss/_settings" as *;
 
-.xterm-screen {
-    padding: 0.8em !important;
-}
-
 .xterm-viewport {
     border-radius: var(#{$css-var-prefix}border-radius) !important;
+}
+
+div.xterm {
+    margin-bottom: 1rem;
+    padding: 0.8rem;
 }
