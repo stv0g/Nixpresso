@@ -1,4 +1,2 @@
-let
-  pkgs = import <nixpkgs> { };
-in
-pkgs.hello.meta
+# In pure evaluation mode, we pass the Nixpkgs package set as an argument.
+{ pkgs }: pkgs.hello.meta
