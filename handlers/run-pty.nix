@@ -39,7 +39,7 @@ mkHandler
 
             document.addEventListener("DOMContentLoaded", async () => {
               const url = new URL(window.location.href);
-              url.pathname += "/run";
+              url.pathname += "run";
               
               const result = document.getElementById('terminal');
 

@@ -32,7 +32,7 @@ type Arguments struct {
 	RemoteAddr *string          `json:"remoteAddr,omitempty"`
 	BodyHash   *string          `json:"bodyHash,omitempty"`
 	Body       *string          `json:"body,omitempty"`
-	TLS        *ConnectionState `json:"tls,omitempty"`
+	TLS        *ConnectionState `json:"tls"`
 
 	// Environment
 	Options  *options.Options `json:"options,omitempty"`

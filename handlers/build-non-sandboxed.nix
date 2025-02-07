@@ -13,7 +13,6 @@ let
   inherit (builtins) getEnv;
   inherit (nixpresso.lib)
     handlers
-    nix
     mkHandler
     ;
 in
@@ -22,16 +21,7 @@ mkHandler
     description = "Serve a response with a non-sandboxed build script";
   }
   (
-    {
-      options,
-      ...
-    }:
     let
-      nixOptions = nix.optionsFromArgs options;
-
-      hasRelaxedSandbox =
-        nixOptions.sandbox or "true" == "relaxed" || nixOptions.sandbox or "true" == "false";
-
       myScript = writeShellApplication {
         name = "script";
 
@@ -58,7 +48,7 @@ mkHandler
         '';
       };
     in
-    if !hasRelaxedSandbox then
+    if false then
       handlers.htmlError {
         status = nixpresso.lib.status.forbidden;
         details = ''

@@ -29,7 +29,6 @@ in
 mkHandler
   {
     description = "Serve a path from a flake package";
-
   }
   (
     {
