@@ -258,8 +258,12 @@ in
   config = mkIf cfg.enable {
     systemd.services = {
       nixpresso = {
+        requires = [ "nix-daemon.service" ];
         wants = [ "network.target" ];
-        after = [ "network.target" ];
+        after = [
+          "network.target"
+          "nix-daemon.service"
+        ];
         wantedBy = [ "multi-user.target" ];
         description = "Nixpresso HTTP server";
         environment = {
