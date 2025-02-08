@@ -5,6 +5,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -82,7 +83,15 @@ func NewHandler(opts options.Options) (h *Handler, err error) {
 	}
 
 	if err := h.inspect(); err != nil {
-		return nil, fmt.Errorf("failed to inspect handler: %w", err)
+		var runErr *util.RunError
+		if errors.As(err, &runErr) {
+			return nil, fmt.Errorf("failed to inspect handler: %s\nstdout:\n%s\nstderr:\n%s",
+				runErr.Error(),
+				string(runErr.Stdout),
+				string(runErr.Stderr))
+		} else {
+			return nil, fmt.Errorf("failed to inspect handler: %w", err)
+		}
 	}
 
 	if h.InspectResult.Pure && h.opts.EvalCache {
