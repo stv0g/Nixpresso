@@ -50,13 +50,13 @@ mkHandler
         <img class="banner" src="/assets/images/nixpresso-banner.svg" alt="Nixpresso logo" />
 
         <div class="badges">
-          <a href="https://github.com/stv0g/nixpresso"><img src="https://img.shields.io/github/stars/stv0g/nixpresso?style=flat-square&logo=github" alt="GitHub stars"></a>
-          <a href="https://github.com/stv0g/nixpresso/actions"><img src="https://img.shields.io/github/actions/workflow/status/stv0g/nixpresso/build.yaml?style=flat-square" alt="GitHub build"></a>
-          <a href="https://goreportcard.com/report/github.com/stv0g/nixpresso"><img src="https://goreportcard.com/badge/github.com/stv0g/nixpresso?style=flat-square" alt="goreportcard"></a>
-          <a href="https://app.codecov.io/gh/stv0g/nixpresso"><img src="https://img.shields.io/codecov/c/github/stv0g/nixpresso?token=WWQ6SR16LA&style=flat-square" alt="Codecov"></a>
-          <a href="https://github.com/stv0g/nixpresso/blob/main/LICENSE"><img src="https://img.shields.io/github/license/stv0g/nixpresso?style=flat-square" alt="License"></a>
-          <img src="https://img.shields.io/github/go-mod/go-version/stv0g/nixpresso?style=flat-square&logo=go" alt="GitHub go.mod Go version">
-          <a href="https://pkg.go.dev/github.com/stv0g/nixpresso"><img src="https://pkg.go.dev/badge/github.com/stv0g/nixpresso.svg" alt="Go Reference"></a>
+          <a href="https://github.com/stv0g/Nixpresso"><img src="https://img.shields.io/github/stars/stv0g/Nixpresso?style=flat-square&logo=github" alt="GitHub stars"></a>
+          <a href="https://github.com/stv0g/Nixpresso/actions"><img src="https://img.shields.io/github/actions/workflow/status/stv0g/Nixpresso/build.yaml?style=flat-square" alt="GitHub build"></a>
+          <a href="https://goreportcard.com/report/github.com/stv0g/Nixpresso"><img src="https://goreportcard.com/badge/github.com/stv0g/Nixpresso?style=flat-square" alt="goreportcard"></a>
+          <a href="https://app.codecov.io/gh/stv0g/Nixpresso"><img src="https://img.shields.io/codecov/c/github/stv0g/Nixpresso?token=WWQ6SR16LA&style=flat-square" alt="Codecov"></a>
+          <a href="https://github.com/stv0g/Nixpresso/blob/main/LICENSE"><img src="https://img.shields.io/github/license/stv0g/Nixpresso?style=flat-square" alt="License"></a>
+          <img src="https://img.shields.io/github/go-mod/go-version/stv0g/Nixpresso?style=flat-square&logo=go" alt="GitHub go.mod Go version">
+          <a href="https://pkg.go.dev/github.com/stv0g/Nixpresso"><img src="https://pkg.go.dev/badge/github.com/stv0g/Nixpresso.svg" alt="Go Reference"></a>
           <a href="code_of_conduct.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=flat-square" alt="Contributor Covenant"></a>
           <a href="https://liberapay.com/stv0g/donate"><img src="https://img.shields.io/liberapay/receives/stv0g.svg?logo=liberapay&style=flat-square" alt="Liberay Pay funding"></a>
         </div>
