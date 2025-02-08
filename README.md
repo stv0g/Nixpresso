@@ -2,12 +2,12 @@
     <img style="width: 40%; margin-bottom: 2em;" src="assets/images/nixpresso-banner.svg" alt="Nixpresso logo" />
 
 [![Demo](https://img.shields.io/badge/Demo-nixpresso.dev-blue?style=flat-square)](https://nixpresso.dev)
-[![GitHub build](https://img.shields.io/github/actions/workflow/status/stv0g/nixpresso/build.yaml?style=flat-square)](https://github.com/stv0g/nixpresso/actions)
-[![goreportcard](https://goreportcard.com/badge/github.com/stv0g/nixpresso?style=flat-square)](https://goreportcard.com/report/github.com/stv0g/nixpresso)
-[![Codecov](https://img.shields.io/codecov/c/github/stv0g/nixpresso?token=WWQ6SR16LA&style=flat-square)](https://app.codecov.io/gh/stv0g/nixpresso)
-[![License](https://img.shields.io/github/license/stv0g/nixpresso?style=flat-square)](https://github.com/stv0g/nixpresso/blob/main/LICENSE)
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/stv0g/nixpresso?style=flat-square)
-[![Go Reference](https://pkg.go.dev/badge/github.com/stv0g/nixpresso.svg)](https://pkg.go.dev/github.com/stv0g/nixpresso)
+[![GitHub build](https://img.shields.io/github/actions/workflow/status/stv0g/Nixpresso/build.yaml?style=flat-square)](https://github.com/stv0g/Nixpresso/actions)
+[![goreportcard](https://goreportcard.com/badge/github.com/stv0g/Nixpresso?style=flat-square)](https://goreportcard.com/report/github.com/stv0g/Nixpresso)
+[![Codecov](https://img.shields.io/codecov/c/github/stv0g/Nixpresso?token=WWQ6SR16LA&style=flat-square)](https://app.codecov.io/gh/stv0g/Nixpresso)
+[![License](https://img.shields.io/github/license/stv0g/Nixpresso?style=flat-square)](https://github.com/stv0g/Nixpresso/blob/main/LICENSE)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/stv0g/Nixpresso?style=flat-square)
+[![Go Reference](https://pkg.go.dev/badge/github.com/stv0g/Nixpresso.svg)](https://pkg.go.dev/github.com/stv0g/Nixpresso)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=flat-square)](code_of_conduct.md)
 [![Liberay Pay funding](https://img.shields.io/liberapay/receives/stv0g.svg?logo=liberapay&style=flat-square)](https://liberapay.com/stv0g/donate)
 </div>
@@ -197,10 +197,10 @@ lib.mkHandler { } {
 The following command starts the Nixpresso server with a set of example handlers, passed as a Flake reference as the only argument:
 
 ```shell
-nixpresso github:stv0g/nixpresso
+nixpresso github:stv0g/Nixpresso
 
 # Or directly from Flake
-nix run github:stv0g/nixpresso -- github:stv0g/nixpresso 
+nix run github:stv0g/Nixpresso -- github:stv0g/Nixpresso 
 ```
 
 > [!IMPORTANT]  
@@ -231,7 +231,7 @@ To get quickly started with implementing your own handlers, use our Flake templa
 ```shell
 mkdir my-handler && cd my-handler
 
-nix flake init -t github:stv0g/nixpresso
+nix flake init -t github:stv0g/Nixpresso
 nix run
 ```
 
