@@ -23,6 +23,7 @@ in
 mkHandler
   {
     description = "Main entry point for all examples";
+    path = "default-handler.nix";
   }
   (
     handlers.router {

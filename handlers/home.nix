@@ -30,11 +30,13 @@ let
   rows = mapAttrsToList (
     name: handler:
     let
-      link = removeSuffix ".nix" name;
+      meta = handler.meta or { };
+      sourceURL = "https://github.com/stv0g/Nixpresso/tree/main/handlers/${meta.path}";
     in
     ''
       <tr>
-        <td><a href="/${link}/">${name}</a></td>
+        <td><a href="/${name}/">${name}</a></td>
+        <td><a href="${sourceURL}">GitHub</a></td>
         <td>${handler.meta.description or ""}</td>
       </tr>''
   ) homeHandlers;
@@ -100,6 +102,7 @@ mkHandler
             <thead>
               <tr>
                 <th>Handler</th>
+                <th>Source</th>
                 <th>Description</th>
               </tr>
             </thead>
