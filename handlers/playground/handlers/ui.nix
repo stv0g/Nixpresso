@@ -171,12 +171,4 @@ else
       ${optionalString (query ? expression) htmlResult}
       ${template ../templates/form.nix}
     '';
-
-    script = ''
-      <script type="module" >
-        import { initPlayground } from '/assets/bundle.js';
-
-        document.addEventListener("DOMContentLoaded", initPlayground);
-      </script>
-    '';
   }

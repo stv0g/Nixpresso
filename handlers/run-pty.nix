@@ -27,25 +27,11 @@ mkHandler
     else
       handlers.html {
         title = "Psuedo-terminal";
+        bodyClasses = [ "run-pty" ];
         main = ''
           <h1>Fastfetch</h1>
           <p>This example runs <a href="https://github.com/fastfetch-cli/fastfetch">fastfetch</a> from Nixpkgs in a pseudo-terminal and uses <a href="https://xtermjs.org/">Xterm.js</a> to visualize the output.</p>
           <pre class="terminal" id="terminal"></pre>
-        '';
-
-        script = ''
-          <script type="module" >
-            import { streamToTerminal } from '/assets/bundle.js';
-
-            document.addEventListener("DOMContentLoaded", async () => {
-              const url = new URL(window.location.href);
-              url.pathname += "run";
-              
-              const result = document.getElementById('terminal');
-
-              await streamToTerminal(terminal.terminal, url.href);
-            });
-          </script>
         '';
       }
   )

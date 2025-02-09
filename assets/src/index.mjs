@@ -8,7 +8,7 @@ import { fromTextarea as editorFromTextarea, fromPre as editorFromPre } from './
 import { init as initPlayground } from './playground';
 import { init as initRunPty } from './run-pty';
 
-async function init() {
+function setupTerminalsAndEditors() {
     let textareas = document.querySelectorAll("textarea");
     textareas.forEach(textarea => {
         if (textarea.classList.contains("editor")) {
@@ -24,6 +24,16 @@ async function init() {
             terminalFromPre(pre);
         }
     });
+}
+
+async function init() {
+    setupTerminalsAndEditors();
+
+    if (document.querySelector("body.playground")) {
+        initPlayground();
+    } else if (document.querySelector("body.run-pty")) {
+        initRunPty();
+    }
 }
 
 document.addEventListener("DOMContentLoaded", init);

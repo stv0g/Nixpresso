@@ -1,10 +1,11 @@
-async function init() {
-    const pre = document.getElementById('terminal');
-    const response = await fetch('run');
-    const out = await response.text();
+import { stream} from './terminal';
 
-    pre.terminal.reset();
-    pre.terminal.write(out);
+async function init() {
+    const url = new URL(window.location.href);
+    url.pathname += "run";
+    
+    const terminal = document.getElementById('terminal');
+    await stream(terminal.terminal, url.href);
 }
 
 export { init };
