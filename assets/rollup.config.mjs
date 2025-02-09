@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
 // SPDX-License-Identifier: Apache-2.0
 
-import resolve from "@rollup/plugin-node-resolve"
+import nodeResolve from "@rollup/plugin-node-resolve"
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import serve from 'rollup-plugin-serve'
@@ -24,7 +24,9 @@ export default {
         sourcemap: 'inline'
     },
     plugins: [
-        resolve({ extensions }),
+        nodeResolve({
+            extensions,
+        }),
         commonjs(),
         babel({
             extensions,
