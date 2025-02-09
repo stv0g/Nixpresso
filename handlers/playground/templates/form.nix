@@ -46,7 +46,9 @@ in
             <option selected disabled>Please choose an example from the list...</option>
           </select>
         </label>
-        <textarea class="editor language-nix" rows=10 name="expression">${expressionString}</textarea>
+        <label>Expression
+          <textarea class="editor language-nix" rows=10 name="expression">${expressionString}</textarea>
+        </label>
       </fieldset>
       <h2>Options</h2>
       <fieldset>
