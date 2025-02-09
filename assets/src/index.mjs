@@ -19,14 +19,15 @@ function showTooltip(elm, timeout, message) {
     }, timeout);
 }
 
-function toggleClassVisibility(prefix, cls) {
-    document.querySelectorAll(`[class^="${prefix}"]`).forEach(elm => {
+function toggleClassVisibility(clsAll, cls) {
+    const modeElms = document.getElementsByClassName(clsAll);
+    for (let elm of modeElms) {
         if (elm.classList.contains(cls)) {
             elm.style.display = "block";
         } else {
             elm.style.display = "none";
         }
-    })
+    }
 }
 
 function createTerminal(id, out) {
@@ -211,7 +212,7 @@ async function initPlayground() {
     }
 
     form.mode.onchange = () => {
-        toggleClassVisibility("mode-", `mode-${form.mode.value}`);
+        toggleClassVisibility("mode", "mode-" + form.mode.value);
     }
 
     form.example.onchange = () => {

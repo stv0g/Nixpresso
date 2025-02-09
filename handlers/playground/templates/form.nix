@@ -60,7 +60,7 @@ in
                 ${optionMode "derivation" "Get derivation as JSON"}
               </select>
             </label>
-            <label class="mode-serve mode-derivation">Format
+            <label class="mode mode-serve mode-derivation">Format
               <select name="format" aria-label="Select the output format..." required>
                 ${optionFormat "text/nix" "Nix"}
                 ${optionFormat "text/plain" "Plain text"}
@@ -69,22 +69,33 @@ in
                 ${optionFormat "application/xml" "XML"}
               </select>
             </label>
-            ${switch "stream" "Stream output" stream [ "mode-run" ]}
+            ${switch "stream" "Stream output" stream [
+              "mode"
+              "mode-run"
+              "mode-log"
+              "mode-derivation"
+            ]}
             ${switch "raw" "Raw output" raw [ ]}
             ${switch "rebuild" "Rebuild derivation" rebuild [ ]}
-            ${switch "recursive" "Recursive" recursive [ "mode-derivation" ]}
-            ${switch "pty" "Pseudo Terminal (PTY)" pty [ "mode-run" ]}
+            ${switch "recursive" "Recursive" recursive [
+              "mode"
+              "mode-derivation"
+            ]}
+            ${switch "pty" "Pseudo Terminal (PTY)" pty [
+              "mode"
+              "mode-run"
+            ]}
           </div>
           <div>
-            <label class="mode-run mode-serve">
+            <label class="mode mode-run mode-serve">
               Derivation output
               <input type="text" name="output" value="${output}" />
             </label>
-            <label class="mode-run mode-serve">
+            <label class="mode mode-run mode-serve">
               Derivation sub-path
               <input type="text" name="subPath" value="${subPath}" />
             </label>
-            <label class="mode-run">
+            <label class="mode mode-run">
               Environment variables
               <textarea name="env" placeholder="MYVAR=myvalue&#10;LANG=en_US.UTF-8">${envString}</textarea>
             </label>
