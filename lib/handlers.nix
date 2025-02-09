@@ -232,7 +232,7 @@ let
       head ? "",
       header ? ''<h1><a href="/"><img class="logo" src="/assets/images/nixpresso-icon.svg" /></a>${title}</h1>'',
       footer ? ''
-        <p>Powered by <a href="https://github.com/stv0g/nixpresso">Nixpresso</a> from <a href="https://github.com/stv0g">@stv0g</a> &middot; <a href="https://liberapay.com/stv0g/donate"><img alt="Donate using Liberapay" src="/assets/images/donate.svg" /></a></p>
+        <p>Powered by <a href="https://github.com/stv0g/nixpresso"><span class="mdi mdi-nix"></span> Nixpresso</a> from <a href="https://github.com/stv0g">@stv0g</a> &middot; <a href="https://liberapay.com/stv0g/donate"><img alt="Donate using Liberapay" src="/assets/images/donate.svg" /></a></p>
       '',
       bodyClasses ? [ ],
       main ? "",
