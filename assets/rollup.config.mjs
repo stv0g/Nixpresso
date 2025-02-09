@@ -6,6 +6,8 @@ import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import serve from 'rollup-plugin-serve'
 import sass from 'rollup-plugin-sass';
+import copy from 'rollup-plugin-copy'
+
 
 import * as sass_ from 'sass';
 
@@ -43,7 +45,14 @@ export default {
             includePaths: [ 'node_modules/' ],
             importer(path) {
                 return { file: path[0] !== '~' ? path : path.slice(1) };
-            }
+            },
         }),
+        copy({
+            targets: [
+                { src: 'node_modules/@mdi/font/fonts/*', dest: 'dist/fonts' },
+                { src: 'assets/*.txt', dest: 'dist' },
+                { src: 'assets/images/**/*', dest: 'dist/images' },
+            ]
+        })
     ],
 }

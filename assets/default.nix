@@ -7,13 +7,11 @@ buildNpmPackage {
   version = "1.0";
 
   src = ./.;
-  npmDepsHash = "sha256-zu0hod7FNooWeGvXUCDmni6xo/U5oVaJ5wgRbYGUbhU=";
+  npmDepsHash = "sha256-2KGZFMdXR7+MJ6Q3ODlO62ebi+yYbZQKsQFibjsGKuc=";
+
+  dontNpmInstall = true;
 
   postInstall = ''
-    cp ./dist/* $out
-    cp -r ./images $out
-    cp *.txt $out
-
-    rm -rf $out/lib
+    cp -r ./dist $out
   '';
 }

@@ -9,6 +9,8 @@
 );
 @use "~@picocss/pico/scss/_settings" as *;
 
+@use "~@mdi/font/scss/materialdesignicons" with ($mdi-font-path: "fonts",
+);
 
 @use "terminal";
 @use "editor";
