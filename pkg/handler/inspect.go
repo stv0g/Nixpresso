@@ -26,7 +26,9 @@ type EvalCacheIgnore struct {
 }
 
 type InspectResult struct {
-	Description     string          `json:"description,omitempty"`
+	Description string `json:"description,omitempty"`
+	Path        string `json:"path,omitempty"`
+
 	EvalCacheIgnore EvalCacheIgnore `json:"evalCacheIgnore,omitempty"`
 
 	ExpectedArgs map[string]bool `json:"expectedArgs,omitempty"`

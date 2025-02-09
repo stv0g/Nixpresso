@@ -13,7 +13,10 @@ let
     mapAttrs'
     removeSuffix
     ;
-  inherit (pkgs.nixpresso.lib) customisation;
+  inherit (pkgs.nixpresso.lib)
+    customisation
+    trivial
+    ;
 
   callHandler = customisation.callWith pkgs;
 
@@ -21,10 +24,23 @@ let
     name: _: name != "default.nix" && name != "default-handler.nix"
   ) (readDir ./.);
 
-  handlers = mapAttrs' (name: _: {
-    name = removeSuffix ".nix" name;
-    value = callHandler (./. + "/${name}") { };
-  }) contents;
+  handlers = mapAttrs' (
+    name: type:
+    let
+      handler = callHandler (./. + "/${name}") { };
+      path = if type == "directory" then "${name}/default.nix" else name;
+
+      extraMeta = {
+        inherit path;
+      };
+    in
+    {
+      name = removeSuffix ".nix" name;
+      value = (trivial.toFunctor handler) // {
+        meta = handler.meta or { } // extraMeta;
+      };
+    }
+  ) contents;
 in
 handlers
 // {
