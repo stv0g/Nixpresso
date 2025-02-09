@@ -10,7 +10,7 @@
 @use "~@picocss/pico/scss/_settings" as *;
 
 
-@use "xterm";
+@use "terminal";
 @use "editor";
 @use "theme/_index";
 @use "theme/solarized" as *;
