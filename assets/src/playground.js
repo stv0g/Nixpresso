@@ -40,7 +40,7 @@ async function init() {
     const linkBtn = document.getElementById('permalink');
 
     if (linkBtn) {
-        linkBtn.onclick = copyPermalink;
+        linkBtn.addEventListener('click', copyPermalink);
     }
 
     var examples = await fetchExamples();
