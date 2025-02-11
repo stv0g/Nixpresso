@@ -257,14 +257,14 @@ func (r *Request) run() (err error) {
 	}
 
 	if r.result.Stream {
-		r.writeHeader(r.result.Status)
-
 		stdout = r.response
 		stderr = r.response
 	} else {
 		stdout = combined
 		stderr = combined
 	}
+
+	r.writeHeader(r.result.Status)
 
 	argv := []string{}
 	argv = append(argv, r.handler.opts.RunArgs...)

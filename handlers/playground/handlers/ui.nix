@@ -57,13 +57,13 @@ let
         pkgs.hello.meta
       '';
 
-  isEnabled = var: default: if query ? ${var} then head query.${var} == "on" else default;
+  isEnabled = var: if query ? ${var} then head query.${var} == "on" else false;
 
-  raw = isEnabled "raw" false;
-  rebuild = isEnabled "rebuild" false;
-  recursive = isEnabled "recursive" false;
-  pty = isEnabled "pty" false;
-  stream = isEnabled "stream" true;
+  raw = isEnabled "raw";
+  rebuild = isEnabled "rebuild";
+  recursive = isEnabled "recursive";
+  pty = isEnabled "pty";
+  stream = isEnabled "stream";
 
   defaultFormat = "text/nix";
 

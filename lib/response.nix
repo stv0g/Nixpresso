@@ -59,7 +59,7 @@ let
     rebuild = false;
     recursive = false;
     pty = false;
-    stream = true;
+    stream = false;
   };
 
   metaDefaults = {
