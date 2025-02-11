@@ -11,7 +11,6 @@ let
     elem
     filterAttrs
     mapAttrsToList
-    removeSuffix
     ;
   inherit (nixpresso.lib)
     handlers
@@ -36,7 +35,7 @@ let
     ''
       <tr>
         <td><a href="/${name}/">${name}</a></td>
-        <td><a href="${sourceURL}">GitHub</a></td>
+        <td><a href="${sourceURL}"><span class="mdi mdi-github"></span></a></td>
         <td>${handler.meta.description or ""}</td>
       </tr>''
   ) homeHandlers;
