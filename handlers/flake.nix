@@ -53,13 +53,11 @@ mkHandler { description = "Serve a path from a flake package"; } (
         <section>
           <h3>Examples</h3>
           <ul>
-            ${
-              concatStrings (
-                map (x: "<li><a href=\"./${replaceStrings [ "#" ] [ "@" ] x}\">${x}</a></li>") (
-                  map html.escape examples
-                )
+            ${concatStrings (
+              map (x: "<li><a href=\"./${replaceStrings [ "#" ] [ "@" ] x}\">${x}</a></li>") (
+                map html.escape examples
               )
-            }
+            )}
           </ul>
         </section>
 
