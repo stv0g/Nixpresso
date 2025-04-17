@@ -5,12 +5,8 @@
 let
   inherit (nixpresso.lib) mkHandler;
 in
-mkHandler
-  {
-    description = "Serve a JSON response";
-  }
-  {
-    body = {
-      Hello = "World!";
-    };
-  }
+mkHandler { description = "Serve a JSON response"; } {
+  body = {
+    Hello = "World!";
+  };
+}

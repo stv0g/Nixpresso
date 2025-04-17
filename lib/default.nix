@@ -11,11 +11,7 @@ let
 
   call = customisation.callWith (
     {
-      inherit
-        lib
-        lib'
-        call
-        ;
+      inherit lib lib' call;
 
     }
     // lib'

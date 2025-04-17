@@ -8,11 +8,7 @@
   trivial,
 }:
 let
-  inherit (builtins)
-    readDir
-    readFileType
-    toString
-    ;
+  inherit (builtins) readDir readFileType toString;
   inherit (lib)
     concatStrings
     concatStringsSep
@@ -31,10 +27,7 @@ let
     removeSuffix
     reverseList
     ;
-  inherit (trivial)
-    updateMeta
-    toFunctor
-    ;
+  inherit (trivial) updateMeta toFunctor;
 
   _status = status;
 
@@ -75,11 +68,7 @@ let
   ifPath =
     pred:
     ifPred (
-      {
-        path,
-        basePath,
-        ...
-      }:
+      { path, basePath, ... }:
       let
         newPath = pred path;
       in
@@ -95,20 +84,11 @@ let
   ifPathMatch =
     regex:
     ifPred (
-      {
-        path,
-        ...
-      }@request:
+      { path, ... }@request:
       let
         matches = match regex path;
       in
-      if matches == null then
-        null
-      else
-        request
-        // {
-          inherit matches;
-        }
+      if matches == null then null else request // { inherit matches; }
     );
 
   ifPathEquals = path: ifPath (p: if path == p then "" else null);
@@ -122,11 +102,7 @@ let
   router =
     {
       routes,
-      defaultHandler ? (
-        htmlError {
-          status = status.notFound;
-        }
-      ),
+      defaultHandler ? (htmlError { status = status.notFound; }),
     }:
     pipe defaultHandler (reverseList routes);
 
@@ -134,13 +110,8 @@ let
     Render a directory index.
   */
   directoryIndex =
-    {
-      fsPath,
-    }:
-    {
-      path,
-      ...
-    }@request:
+    { fsPath }:
+    { path, ... }@request:
     if !hasSuffix "/" path then
       redirect {
         location = "/";
@@ -180,18 +151,12 @@ let
     Serve a files and/or directories with directory indices.
   */
   servePath =
-    {
-      fsPath,
-    }:
+    { fsPath }:
     assert lib.assertMsg (
       isPath fsPath || isDerivation fsPath || hasPrefix "/nix/store/" fsPath
     ) "fsPath must be a path, a derivation or a store path as a string";
     (
-      {
-        path,
-        basePath,
-        ...
-      }:
+      { path, basePath, ... }:
       let
         subPath = removePrefix basePath path;
         rfsPath = fsPath + subPath;
@@ -210,13 +175,7 @@ let
           type = "path";
         }
       else if fileType == "directory" then
-        directoryIndex
-          {
-            fsPath = rfsPath;
-          }
-          {
-            inherit path;
-          }
+        directoryIndex { fsPath = rfsPath; } { inherit path; }
       else
         htmlError {
           status = status.internalServerError;
@@ -314,11 +273,7 @@ let
       status ? _status.movedPermanently,
       relative ? false,
     }:
-    {
-      path,
-      basePath,
-      ...
-    }:
+    { path, basePath, ... }:
     let
       prefix = lib.optionalString relative (basePath + path);
     in

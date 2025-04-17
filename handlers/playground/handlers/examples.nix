@@ -3,11 +3,7 @@
 
 { lib }:
 let
-  inherit (builtins)
-    readDir
-    readFile
-    pathExists
-    ;
+  inherit (builtins) readDir readFile pathExists;
 
   inherit (lib)
     filterAttrs

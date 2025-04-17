@@ -9,30 +9,26 @@
 let
   inherit (nixpresso.lib) mkHandler;
 in
-mkHandler
+mkHandler { description = "Run a shell script with streaming output"; } (
+  { query, ... }:
+  let
+    inherit (lib) head;
+
+    count = head (query.count or [ "100" ]);
+  in
   {
-    description = "Run a shell script with streaming output";
+    body = writeShellApplication {
+      name = "script";
+      text = ''
+        for i in $(seq ${count}); do
+          echo "Step $i (some very long line for enforce buffer flushing)"
+          sleep 0.1
+        done
+      '';
+    };
+
+    mode = "run";
+    stream = false;
+    subPath = "bin/script";
   }
-  (
-    { query, ... }:
-    let
-      inherit (lib) head;
-
-      count = head (query.count or [ "100" ]);
-    in
-    {
-      body = writeShellApplication {
-        name = "script";
-        text = ''
-          for i in $(seq ${count}); do
-            echo "Step $i (some very long line for enforce buffer flushing)"
-            sleep 0.1
-          done
-        '';
-      };
-
-      mode = "run";
-      stream = false;
-      subPath = "bin/script";
-    }
-  )
+)

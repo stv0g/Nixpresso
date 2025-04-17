@@ -8,10 +8,7 @@
   nixdoc,
 }:
 let
-  inherit (lib)
-    concatStringsSep
-    mapAttrsToList
-    ;
+  inherit (lib) concatStringsSep mapAttrsToList;
 
   prefix = "nixpresso.lib";
 
@@ -56,21 +53,15 @@ let
     )}
   '';
 in
-runCommandNoCC "nixpresso-docs"
-  {
-    nativeBuildInputs = [
-      nixdoc
-    ];
-  }
-  ''
-    mkdir $out
+runCommandNoCC "nixpresso-docs" { nativeBuildInputs = [ nixdoc ]; } ''
+  mkdir $out
 
-    ${concatStringsSep "\n" (
-      mapAttrsToList (
-        name: value:
-        ''nixdoc --file ${../lib + "/${name}.nix"} --category "${name}" --description "${value}" --prefix "${prefix}" > $out/${name}.md''
-      ) categories
-    )}
+  ${concatStringsSep "\n" (
+    mapAttrsToList (
+      name: value:
+      ''nixdoc --file ${../lib + "/${name}.nix"} --category "${name}" --description "${value}" --prefix "${prefix}" > $out/${name}.md''
+    ) categories
+  )}
 
-    cp ${indexPage} $out/index.md
-  ''
+  cp ${indexPage} $out/index.md
+''

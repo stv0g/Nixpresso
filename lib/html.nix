@@ -3,11 +3,7 @@
 
 { lib }:
 let
-  inherit (lib)
-    replaceStrings
-    attrNames
-    attrValues
-    ;
+  inherit (lib) replaceStrings attrNames attrValues;
 
   entityTable = {
     "<" = "lt";
@@ -24,8 +20,5 @@ let
   unescape = s: replaceStrings codes chars s;
 in
 {
-  inherit
-    escape
-    unescape
-    ;
+  inherit escape unescape;
 }

@@ -6,27 +6,18 @@
   cowsay,
   nixpresso,
 }:
-nixpresso.lib.mkHandler
-  {
-    description = "My first Nixpresso handler";
-  }
-  (
-    {
-      query,
-      ...
-    }:
-    let
-      inherit (lib) concatStringsSep;
+nixpresso.lib.mkHandler { description = "My first Nixpresso handler"; } (
+  { query, ... }:
+  let
+    inherit (lib) concatStringsSep;
 
-      users = query.user or [ "stv0g" ];
-      message = "Hello, ${concatStringsSep ", " users}!";
-    in
-    {
-      mode = "run";
-      body = cowsay;
-      subPath = "/bin/cowsay";
-      args = [
-        message
-      ];
-    }
-  )
+    users = query.user or [ "stv0g" ];
+    message = "Hello, ${concatStringsSep ", " users}!";
+  in
+  {
+    mode = "run";
+    body = cowsay;
+    subPath = "/bin/cowsay";
+    args = [ message ];
+  }
+)

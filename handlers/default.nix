@@ -2,21 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 {
-  pkgs ? import <nixpkgs> {
-    overlays = [ (import ../overlay.nix) ];
-  },
+  pkgs ? import <nixpkgs> { overlays = [ (import ../overlay.nix) ]; },
 }:
 let
   inherit (builtins) readDir;
-  inherit (pkgs.lib)
-    filterAttrs
-    mapAttrs'
-    removeSuffix
-    ;
-  inherit (pkgs.nixpresso.lib)
-    customisation
-    trivial
-    ;
+  inherit (pkgs.lib) filterAttrs mapAttrs' removeSuffix;
+  inherit (pkgs.nixpresso.lib) customisation trivial;
 
   callHandler = customisation.callWith pkgs;
 
@@ -42,7 +33,4 @@ let
     }
   ) contents;
 in
-handlers
-// {
-  default = callHandler ./default-handler.nix { };
-}
+handlers // { default = callHandler ./default-handler.nix { }; }

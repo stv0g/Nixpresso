@@ -1,16 +1,9 @@
 # SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
 # SPDX-License-Identifier: Apache-2.0
 
-{
-  pkgs,
-  nixpresso,
-}:
+{ pkgs, nixpresso }:
 let
-  inherit (nixpresso.lib)
-    handlers
-    customisation
-    mkHandler
-    ;
+  inherit (nixpresso.lib) handlers customisation mkHandler;
 in
 mkHandler
   {
