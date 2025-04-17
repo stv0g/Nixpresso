@@ -36,7 +36,7 @@ let
   ) examplesFiles;
 
   examplesCompatible = filterAttrs (
-    name: example: !inPureEvalMode || !(example.impure or false)
+    _: example: !inPureEvalMode || !(example.impure or false)
   ) examples;
 in
 {

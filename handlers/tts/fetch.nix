@@ -49,7 +49,7 @@ let
 
   voicesJSON = readFile voicesDrv;
   voices = fromJSON voicesJSON;
-  voicesList = mapAttrsToList (key: voice: voice) voices;
+  voicesList = mapAttrsToList (_: voice: voice) voices;
 
   voice =
     if key != null then
