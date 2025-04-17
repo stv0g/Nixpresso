@@ -3,6 +3,7 @@
   system,
   bash,
   curl,
+  cacert,
 }:
 {
   url,
@@ -16,10 +17,16 @@ derivation {
   outputHashAlgo = hashAlgo;
   outputHashMode = "flat";
   builder = "${bash}/bin/bash";
-  args = [
-    "-c"
-    ''
-      ${curl}/bin/curl -L '${url}' -o "$out"
-    ''
-  ];
+  args = [ ./fetchurl-legacy.sh ];
+
+  PATH = "${curl}/bin";
+
+  inherit url;
+
+  SSL_CERT_FILE =
+    if (hash == "" || hash == lib.fakeSha256 || hash == lib.fakeSha512 || hash == lib.fakeHash) then
+      "${cacert}/etc/ssl/certs/ca-bundle.crt"
+    else
+      "/no-cert-file.crt";
+
 }
