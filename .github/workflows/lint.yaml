@@ -29,3 +29,46 @@ jobs:
         uses: golangci/golangci-lint-action@v7
         with:
           version: v2.0.2
+
+  deadcode:
+    name: deadcode
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Nix
+      uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Cachix
+      uses: cachix/cachix-action@v16
+      with:
+        name: nixpresso
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+    - name: Check for dead code
+      run: nix run github:astro/deadnix
+
+
+  formatting:
+    name: formatting
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Nix
+      uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Cachix
+      uses: cachix/cachix-action@v16
+      with:
+        name: nixpresso
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+    - name: Check for unformatted code
+      run: nix run .#formatter.x86_64-linux -- --check **/*.nix

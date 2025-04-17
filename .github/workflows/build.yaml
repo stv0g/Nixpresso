@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: stv0g/nixpresso
 
 jobs:
   build:
@@ -49,12 +49,6 @@ jobs:
     - name: Test
       run: nix flake check --print-build-logs .
 
-    - name: Check for dead code
-      run: nix run github:astro/deadnix
-
-    - name: Check for unformatted code
-      run: nix run nixpkgs#nixfmt-rfc-style -- --check **/*.nix
-
     - name: Log in to the Container registry
       uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
       with:
@@ -71,8 +65,8 @@ jobs:
         ./result | docker load
         docker tag nixpresso:latest $IMAGE
         docker push $IMAGE
-        DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE)
-        echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+        IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE)
+        echo "digest=${IMAGE_DIGEST#*@}" >> $GITHUB_OUTPUT
 
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v2
