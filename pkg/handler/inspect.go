@@ -40,7 +40,7 @@ type InspectResult struct {
 
 func (h *Handler) inspect() (err error) {
 	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 1*time.Minute)
 	defer cancel()
 
 	if h.FlakeReference != "" {
