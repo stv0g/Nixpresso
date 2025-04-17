@@ -36,9 +36,7 @@
           nixpresso = import ./module.nix { inherit self; };
         };
 
-        lib = import ./lib {
-          lib = nixpkgs.lib;
-        };
+        lib = import ./lib { lib = nixpkgs.lib; };
       }
       // flake-utils.lib.eachDefaultSystem (
         system:
@@ -55,8 +53,10 @@
           };
 
           packages = {
-            default = self.packages.${system}.nixpresso;
+            default = pkgs.nixpresso;
             nixpresso = pkgs.nixpresso;
+
+            nixpresso-docker = pkgs.callPackage ./docker.nix { inherit self; };
           };
 
           inherit (pkgs.nixpresso) handlers;

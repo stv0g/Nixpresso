@@ -237,6 +237,50 @@ nix run
 
 This creates a new flake containing a simple handler in `handler.nix` and a default package which starts Nixpresso with this handler.
 
+### With Docker / Podman
+
+Building a Docker / OCI image of Nixpresso is possible via:
+
+```shell
+nix build github:stv0g/Nixpresso#nixpresso-docker
+./result | podman load
+```
+
+Alternatively, you can use the image from GHCR:
+
+```shell
+podman pull
+```
+
+The default handlers are bundled into the image and are used if no command is passed:
+
+```shell
+podman run -p 8080:8080 nixpresso
+```
+
+Alternatively, you can provide your own handlers:
+
+```shell
+podman run -p 8080:8080 nixpresso github:max-musterman/nixpresso-handlers
+```
+
+Or also locally via a volume mount:
+
+```shell
+podman run -p 8080:8080 -v $(pwd):/handlers -w /handlers nixpresso
+```
+
+Or build building your own image:
+
+```dockerfile
+FROM ghcr.io/stv0g/Nixpresso
+
+ADD . /handlers
+
+CMD ["path:/handlers#handlers.x86_64-linux.default"]
+```
+
+
 ## Handler interface
 
 For each request, Nixpresso as a first step evaluates a Nix _handler_ function.
