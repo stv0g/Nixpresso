@@ -8,11 +8,20 @@ on:
   push:
     branches:
     - main
-  
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -45,3 +54,29 @@ jobs:
 
     - name: Check for unformatted code
       run: nix run nixpkgs#nixfmt-rfc-style -- --check **/*.nix
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and Push Docker image
+      id: push
+      env:
+        IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      run: |
+        nix build --print-build-logs .#nixpresso-docker
+        ./result | docker load
+        docker tag nixpresso:latest $IMAGE
+        docker push $IMAGE
+        DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE)
+        echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
