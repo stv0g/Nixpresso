@@ -49,9 +49,9 @@ mkHandler { description = "Evaluate Nixpkgs derivations and serve them as files.
           <section>
             <h3>Examples</h3>
             <ul>
-              ${
-                concatStrings (map (x: ''<li><a href="${html.escape x}">${html.escape x}</a></li>'') examples)
-              }
+              ${concatStrings (
+                map (x: ''<li><a href="${html.escape x}">${html.escape x}</a></li>'') examples
+              )}
             </ul>
           </section>
 
