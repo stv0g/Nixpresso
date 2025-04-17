@@ -86,7 +86,7 @@ func (h *Handler) Test(testSpecsFilename string, overwriteResults bool) error {
 			slog.Error("Test case failed",
 				slog.String("name", tc.Name),
 				slog.Duration("duration", elapsed))
-			os.Stderr.WriteString(err.Error())
+			os.Stderr.WriteString(err.Error()) //nolint:errcheck
 		} else {
 			slog.Info("Test case passed",
 				slog.String("name", tc.Name),

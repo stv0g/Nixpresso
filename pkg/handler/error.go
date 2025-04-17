@@ -44,10 +44,10 @@ func NewError(err error) (e *Error) {
 	if ok := errors.As(err, &re); ok {
 		e.Status = http.StatusInternalServerError
 
-		e.Path = re.Cmd.Path
-		e.Args = re.Cmd.Args
-		e.Env = re.Cmd.Env
-		e.Dir = re.Cmd.Dir
+		e.Path = re.Path
+		e.Args = re.Args
+		e.Env = re.Env
+		e.Dir = re.Dir
 		e.Stdout = string(re.Stdout)
 		e.Stderr = string(re.Stderr)
 
