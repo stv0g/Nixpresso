@@ -275,7 +275,7 @@ func (r *Request) run() (err error) {
 		if err != nil {
 			return fmt.Errorf("failed to open request body '%s': %w", *r.arguments.Body, err)
 		}
-		defer body.Close()
+		defer body.Close() //nolint:errcheck
 
 		stdin = body
 	} else {
@@ -334,7 +334,7 @@ func (r *Request) serve() (err error) {
 		r.body = filepath.Join(r.body, r.result.SubPath)
 
 		if r.body, err = filepath.EvalSymlinks(r.body); err != nil {
-			return fmt.Errorf("failed to evaluate symlink '%s': %w.", r.body, err)
+			return fmt.Errorf("failed to evaluate symlink '%s': %w", r.body, err)
 		}
 
 		if !r.handler.checkPath(r.body) {
@@ -353,10 +353,10 @@ func (r *Request) serve() (err error) {
 			return fmt.Errorf("failed to open result: %w", err)
 		} else {
 			rd = f
-			defer f.Close()
+			defer f.Close() //nolint:errcheck
 		}
 	default:
-		return fmt.Errorf("invalid combination of type and mode.")
+		return fmt.Errorf("invalid combination of type and mode")
 	}
 
 	r.writeHeader(0) // WriteHeader() is called by ServeContent()

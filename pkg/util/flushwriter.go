@@ -28,11 +28,12 @@ type FlushingResponseWriter struct {
 func (fw *FlushingResponseWriter) Write(p []byte) (int, error) {
 	n, err := fw.ResponseWriter.Write(p)
 
-	if fw.Mode == FlushModeLine {
+	switch fw.Mode {
+	case FlushModeLine:
 		if n := bytes.Count(p, []byte{'\n'}); n > 0 {
 			fw.Flush()
 		}
-	} else if fw.Mode == FlushModeBytes {
+	case FlushModeBytes:
 		fw.BytesWritten += n
 		if fw.BytesWritten >= fw.BytesFlushAfter {
 			fw.Flush()

@@ -30,7 +30,7 @@ func (e *RunError) Unwrap() error {
 }
 
 func (e *RunError) Error() string {
-	return fmt.Sprintf("failed to run: %s", shellescape.QuoteCommand(e.Cmd.Args))
+	return fmt.Sprintf("failed to run: %s", shellescape.QuoteCommand(e.Args))
 }
 
 const (
@@ -78,7 +78,7 @@ func Run(cmd *exec.Cmd, withPTY int, verbose int, stdin io.Reader, stdout, stder
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to start PTY: %w", err)
 		}
-		defer f.Close()
+		defer f.Close() //nolint:errcheck
 
 		go func() {
 			var dst io.Writer

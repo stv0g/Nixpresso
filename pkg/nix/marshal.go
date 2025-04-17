@@ -66,25 +66,39 @@ func marshalValue(v reflect.Value, wr io.Writer, indent string, level int) (err 
 		}
 
 	case error:
-		fmt.Fprintf(wr, `"%s"`, EscapeString(w.Error()))
+		if _, err := fmt.Fprintf(wr, `"%s"`, EscapeString(w.Error())); err != nil {
+			return err
+		}
 
 	case fmt.Stringer:
-		fmt.Fprintf(wr, `"%s"`, EscapeString(w.String()))
+		if _, err := fmt.Fprintf(wr, `"%s"`, EscapeString(w.String())); err != nil {
+			return err
+		}
 
 	case string:
-		fmt.Fprintf(wr, `"%s"`, EscapeString(w))
+		if _, err := fmt.Fprintf(wr, `"%s"`, EscapeString(w)); err != nil {
+			return err
+		}
 
 	case int, int8, int16, int32, int64:
-		fmt.Fprintf(wr, "%d", w)
+		if _, err := fmt.Fprintf(wr, "%d", w); err != nil {
+			return err
+		}
 
 	case uint, uint8, uint16, uint32, uint64:
-		fmt.Fprintf(wr, "%d", w)
+		if _, err := fmt.Fprintf(wr, "%d", w); err != nil {
+			return err
+		}
 
 	case float32, float64:
-		fmt.Fprintf(wr, "%f", w)
+		if _, err := fmt.Fprintf(wr, "%f", w); err != nil {
+			return err
+		}
 
 	case bool:
-		fmt.Fprint(wr, strconv.FormatBool(w))
+		if _, err := fmt.Fprint(wr, strconv.FormatBool(w)); err != nil {
+			return err
+		}
 
 	default:
 		switch v.Kind() {
