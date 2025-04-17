@@ -70,7 +70,7 @@ let
         fn = toFunction f;
       in
       {
-        __functor = self: fn;
+        __functor = _: fn;
         __functionArgs = functionArgs fn;
       };
 

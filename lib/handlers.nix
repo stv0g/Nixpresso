@@ -3,7 +3,6 @@
 
 {
   lib,
-  lib',
   status,
   trivial,
 }:
@@ -58,7 +57,7 @@ let
         if requestUpdate == null then fallbackResponse else matchResponse;
     in
     {
-      __functor = self: handler;
+      __functor = _: handler;
       __functionArgs = newArgs;
       meta = updateMeta matchHandlerMeta fallbackHandlerMeta;
     };

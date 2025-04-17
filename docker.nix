@@ -58,7 +58,7 @@ let
       home ? "/var/empty",
       description ? "",
       shell ? "/bin/false",
-      groups ? [ ],
+      ...
     }:
     "${k}:x:${toString uid}:${toString gid}:${description}:${home}:${shell}"
   );
