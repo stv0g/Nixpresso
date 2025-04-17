@@ -17,10 +17,7 @@
   ...
 }:
 let
-  inherit (lib)
-    optionalString
-    concatStringsSep
-    ;
+  inherit (lib) optionalString concatStringsSep;
 
   option = s: o: description: ''
     <option value="${o}" ${optionalString (s == o) "selected"}>${description}</option>
@@ -71,22 +68,28 @@ in
                 ${optionFormat "application/xml" "XML"}
               </select>
             </label>
-            ${switch "stream" "Stream output" stream [
-              "mode"
-              "mode-run"
-              "mode-log"
-              "mode-derivation"
-            ]}
+            ${
+              switch "stream" "Stream output" stream [
+                "mode"
+                "mode-run"
+                "mode-log"
+                "mode-derivation"
+              ]
+            }
             ${switch "raw" "Raw output" raw [ ]}
             ${switch "rebuild" "Rebuild derivation" rebuild [ ]}
-            ${switch "recursive" "Recursive" recursive [
-              "mode"
-              "mode-derivation"
-            ]}
-            ${switch "pty" "Pseudo Terminal (PTY)" pty [
-              "mode"
-              "mode-run"
-            ]}
+            ${
+              switch "recursive" "Recursive" recursive [
+                "mode"
+                "mode-derivation"
+              ]
+            }
+            ${
+              switch "pty" "Pseudo Terminal (PTY)" pty [
+                "mode"
+                "mode-run"
+              ]
+            }
           </div>
           <div>
             <label class="mode mode-run mode-serve">

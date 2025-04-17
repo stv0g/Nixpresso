@@ -30,16 +30,12 @@ testers.runNixOSTest {
             "${self}/handlers"
           ];
 
-          allowedModes = [
-            "run"
-          ];
+          allowedModes = [ "run" ];
         };
       };
 
       # Make sure the Nixpresso handler does not need to fetch from the binary cache.
-      environment.systemPackages = with pkgs; [
-        cowsay
-      ];
+      environment.systemPackages = with pkgs; [ cowsay ];
 
       systemd.services.nixpresso = {
         environment = {

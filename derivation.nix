@@ -26,13 +26,9 @@ buildGoModule rec {
     docs = callPackage ./docs { };
   };
 
-  nativeCheckInputs = [
-    nix
-  ];
+  nativeCheckInputs = [ nix ];
 
-  checkFlags = [
-    "-skip TestAddToStore"
-  ];
+  checkFlags = [ "-skip TestAddToStore" ];
 
   meta = {
     homepage = "https://nixpresso.dev";

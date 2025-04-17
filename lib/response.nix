@@ -43,9 +43,7 @@ let
     isSerializable
     toFunctor
     ;
-  inherit (handlers)
-    htmlError
-    ;
+  inherit (handlers) htmlError;
 
   responseDefaults = {
     status = status.ok.code;
@@ -66,9 +64,7 @@ let
     evalCacheIgnore = {
       headers = [ ];
 
-      args = [
-        "remoteAddr"
-      ];
+      args = [ "remoteAddr" ];
     };
 
     evalArgs = [ ];
@@ -89,12 +85,7 @@ let
     let
       metaHandler = handler.meta or { };
     in
-    (
-      handler
-      // {
-        meta = updateMeta metaHandler (updateMeta metaDefaults metaExtra);
-      }
-    );
+    (handler // { meta = updateMeta metaHandler (updateMeta metaDefaults metaExtra); });
 
   checkModeType =
     handler:
@@ -127,10 +118,7 @@ let
       args = functionArgs handler;
 
       handlerWithBody =
-        {
-          bodyHash,
-          ...
-        }@request:
+        { bodyHash, ... }@request:
         let
           bodyDrv = fetchurl {
             name = "body";
@@ -174,12 +162,7 @@ let
         meta = handlerFn.meta or { };
 
         headersCachable = getAttrs (meta.cacheHeaders or [ ]) request.headers;
-        requestCachable = getAttrs (meta.cacheArgs or [ ]) (
-          request
-          // {
-            headers = headersCachable;
-          }
-        );
+        requestCachable = getAttrs (meta.cacheArgs or [ ]) (request // { headers = headersCachable; });
         cachable = {
           inherit requestCachable;
           inherit options;
@@ -190,10 +173,7 @@ let
           ETag = hashString "sha256" (toJSON cachable);
         };
       in
-      response
-      // {
-        headers = headersCaching // response.headers;
-      }
+      response // { headers = headersCaching // response.headers; }
     );
 
   fixupResponseBodyType =
@@ -214,12 +194,7 @@ let
               type = "derivation";
             }
           else if isPath body then
-            {
-              type = "path";
-            }
-            // (optionalAttrs (isStorePath body) {
-              body = path body;
-            })
+            { type = "path"; } // (optionalAttrs (isStorePath body) { body = path body; })
           else if isString body then
             {
               type = "string";
@@ -260,9 +235,7 @@ let
             ++ optional (!inPureEvalMode) "system=${builtins.currentSystem}"
             ++ optional (mode == "derivation" && recursive) "recursive"
             ++ optional (type == "derivation" && (mode == "log" || mode == "serve") && rebuild) "rebuild"
-            ++ optionals (type == "derivation") [
-              "output=${output}"
-            ]
+            ++ optionals (type == "derivation") [ "output=${output}" ]
             ++ optional (type == "path" || type == "derivation") "path=${body}"
             ++ optional (subPath != "") "subPath=${subPath}"
           );
@@ -281,10 +254,7 @@ let
       let
         response = handler request;
       in
-      response
-      // {
-        headers = mapAttrs (_: v: toList v) response.headers;
-      }
+      response // { headers = mapAttrs (_: v: toList v) response.headers; }
     );
 
   handleError =

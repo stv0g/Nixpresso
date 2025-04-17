@@ -27,9 +27,7 @@
         };
       in
       {
-        devShells.default = pkgs.mkShell {
-          packages = [ pkgs.nixpresso ];
-        };
+        devShells.default = pkgs.mkShell { packages = [ pkgs.nixpresso ]; };
 
         packages = {
           default = pkgs.writeShellApplication {

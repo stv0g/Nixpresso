@@ -1,3 +1,1 @@
-{
-  description = "Print package meta data";
-}
+{ description = "Print package meta data"; }

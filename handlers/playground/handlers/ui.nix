@@ -6,11 +6,7 @@
   callPackage,
   nixpresso,
 }:
-{
-  query,
-  uri,
-  ...
-}:
+{ query, uri, ... }:
 let
   inherit (builtins)
     elemAt
@@ -34,11 +30,7 @@ let
     splitString
     ;
 
-  inherit (nixpresso.lib)
-    html
-    trivial
-    handlers
-    ;
+  inherit (nixpresso.lib) html trivial handlers;
 
   expressionString =
     if query ? expression then

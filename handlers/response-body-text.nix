@@ -5,10 +5,4 @@
 let
   inherit (nixpresso.lib) mkHandler;
 in
-mkHandler
-  {
-    description = "Serve a static text response";
-  }
-  {
-    body = "Hello, world!";
-  }
+mkHandler { description = "Serve a static text response"; } { body = "Hello, world!"; }

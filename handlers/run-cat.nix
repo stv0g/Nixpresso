@@ -1,20 +1,12 @@
 # SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
 # SPDX-License-Identifier: Apache-2.0
 
-{
-  nixpresso,
-  coreutils,
-}:
+{ nixpresso, coreutils }:
 let
-  inherit (nixpresso.lib)
-    handlers
-    mkHandler
-    ;
+  inherit (nixpresso.lib) handlers mkHandler;
 in
 mkHandler
-  {
-    description = "Run a <tt>cat</tt> command to demonstrate request & response streaming";
-  }
+  { description = "Run a <tt>cat</tt> command to demonstrate request & response streaming"; }
   (
     { method, ... }:
     if method != "POST" then

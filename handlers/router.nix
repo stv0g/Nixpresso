@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
 # SPDX-License-Identifier: Apache-2.0
 
-{
-  lib,
-  nixpresso,
-}:
+{ lib, nixpresso }:
 let
   inherit (lib)
     concatStrings
@@ -12,10 +9,7 @@ let
     generators
     map
     ;
-  inherit (nixpresso.lib)
-    status
-    mkHandler
-    ;
+  inherit (nixpresso.lib) status mkHandler;
   inherit (nixpresso.lib.handlers)
     htmlError
     html
@@ -70,12 +64,7 @@ let
       resource = elemAt matches 1;
       result = personData.${person}.${resource} or null;
     in
-    if result != null then
-      {
-        inherit person resource result;
-      }
-    else
-      null
+    if result != null then { inherit person resource result; } else null
   ) handlerPersonFound handlerNotFound;
 
   handlerPerson = router {
@@ -146,15 +135,11 @@ let
 
   hasQueryArgs = { query, ... }: if query != { } then { } else null;
 in
-mkHandler
-  {
-    description = "Predicate based routing";
-  }
-  (router {
-    routes = [
-      (ifPred hasQueryArgs handlerQuery)
-      (ifPathEquals "/" handlerHelp)
-      (ifPathHasPrefix "/person" handlerPerson)
-    ];
-    defaultHandler = handlerNotFound;
-  })
+mkHandler { description = "Predicate based routing"; } (router {
+  routes = [
+    (ifPred hasQueryArgs handlerQuery)
+    (ifPathEquals "/" handlerHelp)
+    (ifPathHasPrefix "/person" handlerPerson)
+  ];
+  defaultHandler = handlerNotFound;
+})
