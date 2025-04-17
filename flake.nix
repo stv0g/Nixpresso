@@ -65,6 +65,8 @@
             default = self.checks.${system}.nixpresso;
             nixpresso = pkgs.callPackage ./check.nix { inherit self; };
           };
+
+          formatter = pkgs.nixfmt-rfc-style;
         }
       )
     );
