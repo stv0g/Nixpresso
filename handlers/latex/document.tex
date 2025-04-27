@@ -1,0 +1,57 @@
+% SPDX-FileCopyrightText: 2025 Steffen Vogel <post@steffenvogel.de>
+% SPDX-License-Identifier: Apache-2.0
+
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\geometry{margin=1in}
+
+\definecolor{stringColor}{HTML}{718a62}
+\lstdefinelanguage{Nix}{
+	keywords=[1]{true, false, null},
+	keywords=[2]{let, in, with, rec, inherit},
+	keywords=[3]{toString},
+	keywordstyle=\color{blue},
+	sensitive=true,
+	% Comments
+	comment=[l]{\#},
+	% Strings
+    morestring=*[d]{"},
+    morestring=[s][\color{red}]{\$\{}{\}},
+    morestring=*[d]{''},
+	stringstyle=\color{stringColor},
+}
+
+\lstset{
+basicstyle=\small\ttfamily,
+columns=flexible,
+breaklines=true
+}
+
+\title{Nixpresso \LaTeX{} Example}
+\author{Steffen Vogel}
+\date{\today}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+Hello world! This PDF document is rendered on-demand by Nixpresso.
+
+\section{Maxwell Equations}
+``Maxwell's equations'' are named for James Clark Maxwell and are as follow:
+\begin{align}             
+\vec{\nabla} \cdot \vec{E} \quad &=\quad\frac{\rho}{\epsilon_0} &&\text{Gauss's Law} \\      
+\vec{\nabla} \cdot \vec{B} \quad &=\quad 0 &&\text{Gauss's Law for Magnetism}\\
+\vec{\nabla} \times \vec{E} \quad &=\hspace{10pt}-\frac{\partial{\vec{B}}}{\partial{t}} &&\text{Faraday's Law of Induction} \\ 
+\vec{\nabla} \times \vec{B} \quad &=\quad \mu_0\left( \epsilon_0\frac{\partial{\vec{E}}}{\partial{t}}+\vec{J}\right) &&\text{Ampere's Circuital Law}
+\end{align}
+
+\section{Request}
+
+\begin{lstlisting}[language=Nix]
+@prettyRequest@
+\end{lstlisting}
+
+\end{document}
