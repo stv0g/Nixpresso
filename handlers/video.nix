@@ -17,7 +17,7 @@ let
     hash = "sha256-1dATMWY0Fhd/vwo6yeQFhhqFFbmrehTvpOdtXX/t2jQ=";
   };
 in
-mkHandler { description = "Generate and render STL files for 3D printing"; } (
+mkHandler { description = "Renders a video showing the intro crawl of Star Wars"; } (
   { query, ... }:
   let
     defaultText = ''
