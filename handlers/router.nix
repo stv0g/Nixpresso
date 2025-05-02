@@ -52,8 +52,11 @@ let
         </section>
 
         <section>
-          <button onclick="history.back()">Back</button>
-        </section>
+          <fieldset role="group">
+            <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+            <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/router.nix';"><span class="mdi mdi-github"/> Code</button></a>
+          </fieldset>
+        <section>
       '';
     };
 
@@ -86,8 +89,11 @@ let
         </section>
 
         <section>
-          <button onclick="history.back()">Back</button>
-        </section>
+          <fieldset role="group">
+            <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+            <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/router.nix';"><span class="mdi mdi-github"/> Code</button></a>
+          </fieldset>
+        <section>
       '';
     };
 
@@ -109,7 +115,10 @@ let
         </section>
 
         <section>
-          <a href="javascript:history.back()"><button>Back</button></a>
+          <fieldset role="group">
+            <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+            <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/router.nix';"><span class="mdi mdi-github"/> Code</button></a>
+          </fieldset>
         <section>
       '';
     };
@@ -128,7 +137,10 @@ let
     status = status.notFound;
     details = ''
       <section>
-        <button onclick="history.back()">Back</button>
+        <fieldset role="group">
+          <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+          <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/tree/main/handlers/router.nix';"><span class="mdi mdi-github""/> Code</button></a>
+        </fieldset>
       </section>
     '';
   };

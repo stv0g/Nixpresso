@@ -22,6 +22,13 @@ mkHandler { description = "Run fastfetch in a pseudo-terminal (pty)"; } (
         <h1>Fastfetch</h1>
         <p>This example runs <a href="https://github.com/fastfetch-cli/fastfetch">fastfetch</a> from Nixpkgs in a pseudo-terminal and uses <a href="https://xtermjs.org/">Xterm.js</a> to visualize the output.</p>
         <pre class="terminal" id="terminal"></pre>
+
+        <section>
+          <fieldset role="group">
+            <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+            <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/run-pty.nix';"><span class="mdi mdi-github"/> Code</button></a>
+          </fieldset>
+        <section>
       '';
     }
 )

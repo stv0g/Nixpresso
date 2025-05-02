@@ -102,12 +102,13 @@ in
         </div>
       </fieldset>
 
-      <div role="group">
+      <fieldset role="group">
         <button type="submit">
           Evaluate&emsp;<kbd>Ctrl</kbd> + <kbd>&crarr;</kbd>
         </button>
-        <button onclick="history.back()">Back</button>
-      </div>
+        <button onclick="window.location = '/';""><span class="mdi mdi-arrow-left" /> Back</button>
+        <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/flake.nix';"><span class="mdi mdi-github"/> Code</button></a>
+      </fieldset>
     </form>
   </section>
 ''
