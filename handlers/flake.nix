@@ -15,6 +15,7 @@ let
     pathExists
     removePrefix
     replaceStrings
+    mapAttrsToList
     splitString
     ;
   inherit (nixpresso.lib) handlers html mkHandler;
@@ -37,12 +38,14 @@ mkHandler { description = "Serve a path from a flake package"; } (
 
     body = attrByPath attrs "" flake;
 
-    examples = [
-      "nixpkgs#legacyPackages.x86_64-linux.hello.meta"
-      "nixpkgs#legacyPackages.x86_64-linux.hello.version"
-      "nixpkgs#legacyPackages.x86_64-linux.hello/bin/hello"
-      "nixpkgs#legacyPackages.x86_64-linux.hello/share/"
-    ];
+    examples = {
+      "nixpkgs#legacyPackages.x86_64-linux.hello.meta" =
+        "serve the meta information of the hello package";
+      "nixpkgs#legacyPackages.x86_64-linux.hello.version" = "serve the version of the hello package";
+      "nixpkgs#legacyPackages.x86_64-linux.hello/bin/hello" = "serve the hello binary";
+      "nixpkgs#legacyPackages.x86_64-linux.hello/share/" =
+        "serve the share directory of the hello package";
+    };
   in
   if nPath == "" then
     handlers.html {
@@ -50,13 +53,19 @@ mkHandler { description = "Serve a path from a flake package"; } (
       main = ''
         <h1>Serve content from Flake outputs</h1>
 
+        <p>
+          This handler serves content from Flake outputs. It can be used to serve files from Nixpkgs or any other flake.
+          <br />
+          The path is specified as <code>flakeRef#attr1.attr2.attr3</code>. The first part is the flake reference, the second part is the attribute path.
+        </p>
+
         <section>
           <h3>Examples</h3>
           <ul>
             ${concatStrings (
-              map (x: "<li><a href=\"./${replaceStrings [ "#" ] [ "@" ] x}\">${x}</a></li>") (
-                map html.escape examples
-              )
+              mapAttrsToList (
+                x: d: "<li><a href=\"./${replaceStrings [ "#" ] [ "@" ] (html.escape x)}\">${x}</a> ${d}</li>"
+              ) examples
             )}
           </ul>
         </section>
