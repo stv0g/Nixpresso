@@ -50,8 +50,8 @@ code {
     border: var(#{$css-var-prefix}border-width) solid var(#{$css-var-prefix}muted-border-color) !important;
 }
 
-kbd {
-    padding: 0.2em 0.3em;
+code, kbd {
+    padding: 0.1em 0.3em;
 }
 
 pre.terminal {
