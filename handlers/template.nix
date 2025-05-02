@@ -35,8 +35,11 @@ mkHandler { description = "Render an HTML template with all request data"; } (
       </section>
 
       <section>
-        <button onclick="history.back()">Back</button>
-      </section>
+        <fieldset role="group">
+          <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+          <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/template.nix';"><span class="mdi mdi-github"/> Code</button></a>
+        </fieldset>
+      <section>
     '';
   }
 )

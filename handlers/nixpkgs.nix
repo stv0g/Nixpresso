@@ -56,7 +56,10 @@ mkHandler { description = "Evaluate Nixpkgs derivations and serve them as files.
           </section>
 
           <section>
-            <button onclick="history.back()">Back</button>
+           <fieldset role="group">
+             <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+             <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/nixpkgs.nix';"><span class="mdi mdi-github"/> Code</button></a>
+           </fieldset>
           <section>
         '';
       }

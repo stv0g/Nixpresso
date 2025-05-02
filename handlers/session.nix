@@ -108,6 +108,13 @@ mkHandler { description = "A simple session system"; } (
               </div>
             </form>
         </section>
+
+        <section>
+          <fieldset role="group">
+            <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+            <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/session.nix';"><span class="mdi mdi-github"/> Code</button></a>
+          </fieldset>
+        <section>
       '';
 
       headers = {
