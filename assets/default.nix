@@ -7,7 +7,7 @@ buildNpmPackage {
   version = "1.0";
 
   src = ./.;
-  npmDepsHash = "sha256-2KGZFMdXR7+MJ6Q3ODlO62ebi+yYbZQKsQFibjsGKuc=";
+  npmDepsHash = "sha256-o3mz84gDXZT98HWpDok89q8XyxaqEfajj8tv/yGuluY=";
 
   dontNpmInstall = true;
 
