@@ -11,10 +11,11 @@
 }:
 let
   inherit (lib)
+    concatStringsSep
+    filterAttrs
+    groupBy
     head
     mapAttrsToList
-    groupBy
-    concatStringsSep
     ;
   inherit (nixpresso.lib) handlers url mkHandler;
 
@@ -65,16 +66,18 @@ mkHandler { description = "Synthesize speech from text using piper-tts"; } (
             ;
         };
 
-    audioQuery = url.encodeQueryString {
-      inherit
-        key
-        code
-        family
-        name
-        quality
-        text
-        ;
-    };
+    audioQuery = url.encodeQueryString (
+      filterAttrs (_: v: v != null) {
+        inherit
+          key
+          code
+          family
+          name
+          quality
+          text
+          ;
+      }
+    );
   in
   if path == "/audio" then
     {
