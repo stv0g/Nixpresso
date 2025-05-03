@@ -87,6 +87,18 @@ let
     in
     (handler // { meta = updateMeta metaHandler (updateMeta metaDefaults metaExtra); });
 
+  passMeta =
+    handler:
+    updateHandler handler (
+      request:
+      handler (
+        request
+        // {
+          meta = handler.meta or { };
+        }
+      )
+    );
+
   checkModeType =
     handler:
     updateHandler handler (
@@ -308,6 +320,7 @@ let
       toFunctor
       withResponseDefaults
       (withMetaDefaults meta)
+      passMeta
       withRequestBodyDrv
       checkCacheHeaders
       withCacheHeaders
