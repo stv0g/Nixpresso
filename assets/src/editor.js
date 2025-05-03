@@ -4,6 +4,7 @@
 import { EditorState } from '@codemirror/state';
 import { keymap, EditorView } from '@codemirror/view';
 import { nix } from "@replit/codemirror-lang-nix";
+import { latex } from "codemirror-lang-latex";
 import { json } from "@codemirror/lang-json";
 import { basicSetup } from 'codemirror';
 import { solarizedLight } from '@uiw/codemirror-theme-solarized';
@@ -68,6 +69,14 @@ function fromPre(elm) {
 
         case "nix":
             language = nix();
+            break;
+
+        case "latex":
+            language = latex({
+              autoCloseTags: true,    // Auto-close environments
+              enableLinting: true,    // Enable linting
+              enableTooltips: true    // Enable hover tooltips
+            });
             break;
 
         default:
