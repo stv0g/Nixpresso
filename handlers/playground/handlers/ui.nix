@@ -6,7 +6,12 @@
   callPackage,
   nixpresso,
 }:
-{ query, uri, ... }:
+{
+  query,
+  uri,
+  meta,
+  ...
+}:
 let
   inherit (builtins)
     elemAt
@@ -147,7 +152,7 @@ if raw then
   }
 else
   handlers.html {
-    title = "Nixpresso Playground";
+    title = meta.description;
     bodyClasses = [ "playground" ];
 
     head = ''

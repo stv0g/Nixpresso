@@ -21,7 +21,7 @@ let
   inherit (nixpresso.lib) handlers html mkHandler;
 in
 mkHandler { description = "Serve a path from a flake package"; } (
-  { path, ... }:
+  { path, meta, ... }:
   let
     nPath = removePrefix "/" path;
     pathComponents = splitString "@" nPath;
@@ -49,10 +49,8 @@ mkHandler { description = "Serve a path from a flake package"; } (
   in
   if nPath == "" then
     handlers.html {
-      title = "Flake";
+      title = meta.description;
       main = ''
-        <h1>Serve content from Flake outputs</h1>
-
         <p>
           This handler serves content from Flake outputs. It can be used to serve files from Nixpkgs or any other flake.
           <br />
@@ -60,7 +58,7 @@ mkHandler { description = "Serve a path from a flake package"; } (
         </p>
 
         <section>
-          <h3>Examples</h3>
+          <h2>Examples</h2>
           <ul>
             ${concatStrings (
               mapAttrsToList (

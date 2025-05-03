@@ -110,12 +110,13 @@ let
 in
 mkHandler
   {
-    description = "Render a 3d animation with OpenSCAD";
+    description = "Render a 3D animation with OpenSCAD";
   }
   (
     {
       query,
       path,
+      meta,
       ...
     }:
     let
@@ -153,7 +154,7 @@ mkHandler
         }
     else
       handlers.html {
-        title = "Render a 3d animation with OpenSCAD";
+        title = meta.description;
         main = ''
           <p>
             This example renders an animated 3D text with OpenSCAD and
@@ -181,22 +182,15 @@ mkHandler
           </section>
 
           <section>
-            ${
-              if format == "webm" then
-                ''
-                  <h2>WebM Video</h2>
-                  <center>
-                    <video src="video?${videoQuery}" autoplay muted />
-                  </center>
-                ''
-              else
-                ''
-                  <h2>GIF Image</h2>
-                  <center>
-                    <img src="video?${videoQuery}" />
-                  </center>
-                ''
-            }
+            <h2>Output</h2>
+            <center>
+              ${
+                if format == "webm" then
+                  ''<video src="video?${videoQuery}" autoplay muted />''
+                else
+                  ''<img src="video?${videoQuery}" />''
+              }
+            </center>
           </section>
 
           <section>

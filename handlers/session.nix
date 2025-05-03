@@ -10,6 +10,7 @@ mkHandler { description = "A simple session system"; } (
     headers,
     method,
     body,
+    meta,
     ...
   }:
   let
@@ -73,16 +74,21 @@ mkHandler { description = "A simple session system"; } (
     }
   else
     handlers.html {
-      title = "Session Demo";
+      title = meta.description;
       main = ''
-          <p>This example demonstrates how we can store session data in the Nix store and load it from a Cookie.</p>
+          <p>
+            This example demonstrates how we can store session data in the Nix store and load it from a Cookie.
+            The the <emph>Add</emph> and <emph>Remove</emph> buttons will add or remove a key/value pair to the session data.
+            With every request the <code>counter</code> key is incremented.
+          </p>
+
           <section>
-            <h2>Session Data</h2>
+            <h2>Data</h2>
             <pre class="editor"><code>${html.escape prettyNewSession}</code></pre>
           </section>
 
           <section>
-            <h2>Update Session</h2>
+            <h2>Update</h2>
             <form method="post">
               <fieldset>
                 <label>
