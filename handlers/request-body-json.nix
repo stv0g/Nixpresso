@@ -26,12 +26,20 @@ mkHandler { description = "Return JSON request payload a JSON response"; } (
   if method != "POST" then
     handlers.htmlError {
       status = status.methodNotAllowed;
-      details = ''
-        <p>Please pass some JSON encoded payload via a <tt>POST</tt> request:<p>
+      details = "Please pass some JSON encoded payload via a <tt>POST</tt> request.";
+      main = ''
         <section>
-          <h3>Example</h3>
+          <h2>Example</h2>
           <code>curl -v ${url.full { inherit host uri tls; }} -d '{"some": "value"}'</code>
-        </section>'';
+        </section>
+
+        <section>
+          <fieldset role="group">
+            <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+            <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/request-body-json.nix';"><span class="mdi mdi-github"/> Code</button></a>
+          </fieldset>
+        <section>
+      '';
     }
   else if bodyRaw == "" then
     handlers.htmlError {

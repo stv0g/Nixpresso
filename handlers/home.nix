@@ -29,12 +29,12 @@ let
     ''
       <tr>
         <td><a href="/${name}/">${name}</a></td>
-        <td><a href="${sourceURL}"><span class="mdi mdi-github"></span></a></td>
         <td>${handler.meta.description or ""}</td>
+        <td><a href="${sourceURL}"><span class="mdi mdi-github"></span></a></td>
       </tr>''
   ) homeHandlers;
 in
-mkHandler { description = "Home page"; } (
+mkHandler { description = "Home Page"; } (
   handlers.html {
     title = "Nixpresso - Expressions served hot!";
     header = ''
@@ -61,9 +61,9 @@ mkHandler { description = "Home page"; } (
         </p>
 
         <pre class="editor"><code>{
-          query ? { user = "stv0g"; }
+          query ? { user = [ "stv0g" ]; }
       }: {
-          body = "Hello ''${query.user}";
+          body = "Hello ''${builtins.head query.user}";
       }</code></pre>
 
         <p>
@@ -87,12 +87,12 @@ mkHandler { description = "Home page"; } (
       <section>
         <h2>Available handlers</h2>
         <p>Click on a handler to see more details.</p>
-        <table>
+        <table id="examples">
           <thead>
             <tr>
               <th>Handler</th>
-              <th>Source</th>
               <th>Description</th>
+              <th>Source</th>
             </tr>
           </thead>
           <tbody>

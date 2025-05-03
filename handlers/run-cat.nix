@@ -12,9 +12,20 @@ mkHandler
     if method != "POST" then
       handlers.htmlError {
         status = nixpresso.lib.status.methodNotAllowed;
-        details = ''
-          <p>Please send some data via POST:</p>
-          <p><code>echo "Hello world" | curl -v -X POST --data-binary @- http://localhost:8080/run-cat</code></p>'';
+        details = "Please send some data via POST.";
+        main = ''
+          <section>
+            <h2>Example</h2>
+            <code>echo "Hello world" | curl -v -X POST --data-binary @- http://localhost:8080/run-cat</code>
+          </section>
+
+          <section>
+            <fieldset role="group">
+              <button onclick="window.location = '/';"><span class="mdi mdi-arrow-left" /> Back</button>
+              <button onclick="window.location = 'https://github.com/stv0g/Nixpresso/blob/main/handlers/run-cat.nix';"><span class="mdi mdi-github"/> Code</button></a>
+            </fieldset>
+          <section>
+        '';
       }
     else
       {

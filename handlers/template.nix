@@ -20,6 +20,7 @@ mkHandler { description = "Render an HTML template with all request data"; } (
     bodyHash, # deadnix: skip
     body, # deadnix: skip
     options, # deadnix: skip
+    meta,
     tls,
     ...
   }@request:
@@ -27,8 +28,12 @@ mkHandler { description = "Render an HTML template with all request data"; } (
     prettyRequest = lib.generators.toPretty { } request;
   in
   handlers.html {
-    title = "Nix-based templating";
+    title = meta.description;
     main = ''
+      <p>
+        This example renders an HTML template with all request data.
+      </p>
+
       <section>
         <h2>Request</h2>
         <pre class="editor"><code>${html.escape prettyRequest}</code></pre>

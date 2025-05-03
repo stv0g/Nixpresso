@@ -18,7 +18,12 @@ let
   inherit (nixpresso.lib) handlers html mkHandler;
 in
 mkHandler { description = "Evaluate Nixpkgs derivations and serve them as files."; } (
-  { path, basePath, ... }:
+  {
+    path,
+    basePath,
+    meta,
+    ...
+  }:
   let
     nPath = removePrefix "/" path;
     pathComponents = splitString "/" nPath;
@@ -42,12 +47,14 @@ mkHandler { description = "Evaluate Nixpkgs derivations and serve them as files.
       }
     else if attr == "" then
       handlers.html {
-        title = "Nixpkgs";
+        title = meta.description;
         main = ''
-          <h1>Serve content from realized Nixpkgs derivations</h1>
+          <p>
+            This handler serves build outputs from Nixpkgs derivations.
+          </p>
 
           <section>
-            <h3>Examples</h3>
+            <h2>Examples</h2>
             <ul>
               ${concatStrings (
                 map (x: ''<li><a href="${html.escape x}">${html.escape x}</a></li>'') examples

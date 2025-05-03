@@ -250,6 +250,7 @@ let
     {
       status ? _status.internalServerError,
       details ? "Sorry, something went wrong.",
+      main ? "",
     }@rest:
     html (
       rest
@@ -259,6 +260,7 @@ let
         main = ''
           <h2>${status.message} (${toString status.code})</h2>
           <p>${details}</p>
+          ${main}
         '';
       }
     );
