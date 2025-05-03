@@ -6,7 +6,6 @@ import './index.scss';
 import { Terminal, create as createTerminal, stream as streamToTerminal, fromPre as terminalFromPre } from './terminal';
 import { fromTextarea as editorFromTextarea, fromPre as editorFromPre } from './editor';
 import { init as initPlayground } from './playground';
-import { init as initRunPty } from './run-pty';
 
 function setupTerminalsAndEditors() {
     let textareas = document.querySelectorAll("textarea");
@@ -31,11 +30,9 @@ async function init() {
 
     if (document.querySelector("body.playground")) {
         initPlayground();
-    } else if (document.querySelector("body.run-pty")) {
-        initRunPty();
     }
 }
 
 document.addEventListener("DOMContentLoaded", init);
 
-export { Terminal, createTerminal, initPlayground, initRunPty, streamToTerminal, editorFromTextarea, editorFromPre };
+export { streamToTerminal };

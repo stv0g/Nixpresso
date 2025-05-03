@@ -230,11 +230,11 @@ let
     );
 
   setNixHeader =
-    handlerFn:
-    updateHandler handlerFn (
+    handler:
+    updateHandler handler (
       request:
       let
-        response = handlerFn request;
+        response = handler request;
         headerComponents =
           with response;
           (
@@ -326,8 +326,8 @@ let
       withCacheHeaders
       handleError
       fixupResponseBodyType
-      checkModeType
       setNixHeader
+      checkModeType
       fixupResponseHeaders
     ];
 in
