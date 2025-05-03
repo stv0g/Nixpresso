@@ -4,18 +4,19 @@ version = 1
 
 [[annotations]]
 path = [
-     "README.md",
-     "flake.lock",
-     "go.sum",
-     "docs/*md",
+     "assets/assets/*.txt",
+     "assets/assets/images/*.svg",
      "assets/package-lock.json",
      "assets/package.json",
-     "assets/assets/images/*.svg",
-     "assets/assets/*.txt",
+     "docs/*md",
+     "flake.lock",
+     "go.sum",
      "handlers/examples/*.nix",
-     "pkg/handler/*.nix",
+     "handlers/latex/document.tex",
+     "handlers/playground/*.html",
      "handlers/playground/examples/*.nix",
-     "handlers/playground/*.html"
+     "pkg/handler/*.nix",
+     "README.md"
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "2025 Steffen Vogel <post@steffenvogel.de>"
