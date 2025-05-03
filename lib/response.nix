@@ -110,14 +110,14 @@ let
         handlers.htmlError {
           status = status.serviceUnavailable;
           details = ''
-            This handler requires the ${response.mode} mode.
+            This handler requires the ${response.mode} mode. Please start Nixpresso with <code>--allow-mode ${response.mode}</code>.
           '';
         }
       else if !elem response.type options.allowedTypes then
         handlers.htmlError {
           status = status.serviceUnavailable;
           details = ''
-            This handler requires the ${response.type} type.
+            This handler requires the ${response.type} type. Please start Nixpresso with <code>--allow-type ${response.type}</code>.
           '';
         }
       else
