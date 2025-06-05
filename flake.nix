@@ -4,6 +4,11 @@
 {
   description = "A HTTP server delegating request handling to a Nix function";
 
+  nixConfig = {
+    extra-substituters = "https://stv0g.cachix.org";
+    extra-trusted-public-keys = "stv0g.cachix.org-1:Bliox3TtWqQhKr2w6HMSbpwn9E9M2vgKmA/N7VpYOmY=";
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
