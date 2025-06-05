@@ -16,7 +16,8 @@ path = [
      "handlers/playground/*.html",
      "handlers/playground/examples/*.nix",
      "pkg/handler/*.nix",
-     "README.md"
+     "README.md",
+     ".renovaterc.json"
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "2025 Steffen Vogel <post@steffenvogel.de>"
