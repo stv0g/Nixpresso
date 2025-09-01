@@ -32,6 +32,7 @@ mkHandler
           body = nixpresso.assets;
           subPath = "robots.txt";
         })
-      ] ++ exampleRoutes;
+      ]
+      ++ exampleRoutes;
     }
   )
