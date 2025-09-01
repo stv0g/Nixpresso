@@ -12,7 +12,7 @@ buildGoModule rec {
   version = "0.1.0";
 
   src = ./.;
-  vendorHash = "sha256-47hCxtCzFBiiXfei4t7pKOLxWK+2a6PT1L3mPUK6NZ4=";
+  vendorHash = "sha256-AVfaJpZ//AQKB3+D+FL0kq/FznwmQLIMhxim05esl24=";
 
   ldflags = [
     "-X 'github.com/stv0g/nixpresso/pkg.Version=${version}'"

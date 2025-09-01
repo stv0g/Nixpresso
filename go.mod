@@ -3,20 +3,19 @@
 
 module github.com/stv0g/nixpresso
 
-go 1.23
+go 1.24.6
 
 require (
-	al.essio.dev/pkg/shellescape v1.5.1
+	al.essio.dev/pkg/shellescape v1.6.0
 	github.com/creack/pty v1.1.24
 	github.com/elastic/go-freelru v0.16.0
-	github.com/sergi/go-diff v1.3.1
-	github.com/spf13/cobra v1.8.1
-	github.com/zolstein/sync-map v0.0.0-20241114025029-d8a8d5a801cb
-	golang.org/x/sys v0.29.0
+	github.com/sergi/go-diff v1.4.0
+	github.com/spf13/cobra v1.9.2-0.20250831231508-51d675196729
+	golang.org/x/sys v0.35.0
 )
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/testify v1.10.0 // indirect
+	github.com/spf13/pflag v1.0.8 // indirect
+	github.com/stretchr/testify v1.11.1 // indirect
 )
