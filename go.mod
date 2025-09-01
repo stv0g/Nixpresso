@@ -6,7 +6,7 @@ module github.com/stv0g/nixpresso
 go 1.23
 
 require (
-	al.essio.dev/pkg/shellescape v1.5.1
+	al.essio.dev/pkg/shellescape v1.6.0
 	github.com/creack/pty v1.1.24
 	github.com/elastic/go-freelru v0.16.0
 	github.com/sergi/go-diff v1.3.1
