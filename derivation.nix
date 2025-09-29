@@ -4,10 +4,10 @@
 {
   lib,
   callPackage,
-  buildGoModule,
+  buildGo125Module,
   nix,
 }:
-buildGoModule rec {
+buildGo125Module rec {
   name = "nixpresso";
   version = "0.1.0";
 
